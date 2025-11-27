@@ -164,15 +164,12 @@
                         <span class="font-medium">Pengenalan & Misi</span>
                     </a>
                 </li>
-
                 <li>
-                    <a href="#memberSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-emerald-600/20 p-3 rounded-lg transition group">
-                        <span class="bg-emerald-500/10 text-emerald-400 p-2 rounded-md group-hover:bg-emerald-500 group-hover:text-white transition"><i class="fa-solid fa-users w-4 text-center"></i></span>
-                        <span class="font-medium">Senarai Ahli</span>
+                    <a href="#checklistSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-red-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-indigo-500/10 text-indigo-400 p-2 rounded-md group-hover:bg-indigo-500 group-hover:text-white transition"><i class="fa-solid fa-lightbulb w-4 text-center"></i></span>
+                        <span class="font-medium">Checklist</span>
                     </a>
                 </li>
-                <!-- REMOVED SEPARATE MISI LINK -->
-                
                  <li>
                     <a href="#tentativeSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-indigo-600/20 p-3 rounded-lg transition group">
                         <span class="bg-indigo-500/10 text-indigo-400 p-2 rounded-md group-hover:bg-indigo-500 group-hover:text-white transition"><i class="fa-solid fa-map-location-dot w-4 text-center"></i></span>
@@ -184,6 +181,12 @@
                     <a href="#financeSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-teal-600/20 p-3 rounded-lg transition group">
                         <span class="bg-teal-500/10 text-teal-400 p-2 rounded-md group-hover:bg-teal-500 group-hover:text-white transition"><i class="fa-solid fa-wallet w-4 text-center"></i></span>
                         <span class="font-medium">Kewangan & Bayaran</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#memberSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-emerald-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-emerald-500/10 text-emerald-400 p-2 rounded-md group-hover:bg-emerald-500 group-hover:text-white transition"><i class="fa-solid fa-users w-4 text-center"></i></span>
+                        <span class="font-medium">Senarai Semak Pembayaran</span>
                     </a>
                 </li>
                 <li>
@@ -270,7 +273,7 @@
             <div class="grid grid-cols-2 gap-4">
                 
                 <!-- Card 1: Countdown - NOW CLICKABLE -->
-                <div class="glass-panel rounded-2xl p-4 shadow-sm border-l-4 border-blue-500 relative overflow-hidden stat-card-link" onclick="document.getElementById('memberSection').scrollIntoView({behavior: 'smooth'})">
+                <div class="glass-panel rounded-2xl p-4 shadow-sm border-l-4 border-blue-500 relative overflow-hidden stat-card-link">
                     <div class="stat-content">
                         <div class="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-2">
                             <i class="fa-solid fa-hourglass-half text-6xl text-blue-800"></i>
@@ -372,14 +375,17 @@
                         </div>
 
                         <h3 class="font-bold text-gray-800 text-base border-b border-purple-100 pb-2 mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-circle-info text-purple-600"></i> Intro Program
+                            <i class="fa-solid fa-circle-info text-purple-600"></i> Pengenalan
                         </h3>
                         
                         <p class="text-justify">
-                            Selamat datang ke laman rasmi <span class="text-emerald-600 font-bold">Misi Pemburuan Sotong 2026</span>! tempat impian laut dalam bertukar menjadi kenyataan. Ini bukan trip biasa, ini adalah panggilan untuk menawan Laut China Selatan, dipacu oleh dua ketua strategi yang sentiasa konsisten, <span class="font-bold text-gray-900">ManRemy</span> dan <span class="font-bold text-gray-900">John</span>.
+                            Al-kisah, maka terbukalah laman rasmi <span class="text-emerald-600 font-bold">Misi Pemburuan Sotong 2026</span>, tanda bermulanya pelayaran besar menuju <span class="text-emerald-600 font-bold">Laut China Selatan</span>. Perjalanan ini bukanlah pengembaraan biasa, melainkan usaha menawan rezeki laut di bawah pimpinan <span class="font-bold text-gray-900">ManRemy</span> dan <span class="font-bold text-gray-900">John</span>.
                         </p>
                         <p class="text-justify">
-                            Dengan gabungan pengalaman dan disiplin mereka, peluang untuk menikmati sotong segar panas-panas di atas bot bukan lagi topik sembang kedai mamak. Kita berkumpul sebagai satu armada dengan satu tekad: <span class="font-bold text-gray-900">penuhkan tong dan pulang sebagai legenda.</span>
+                            Syahadan, berkumpullah segala ahli armada: <span class="font-bold text-gray-900">CheLan, Mie, AbgRizal, Rusdi, AbgLan, Man, AbgWan dan Hariz</span> bersiap dengan peralatan dan jadual masing-masing.
+                        </p>
+                        <p class="text-justify">
+                            Hatta, dengan kesungguhan itu, harapan menikmati hasil laut segar bukan lagi khabar angin, melainkan tujuan yang semakin hampir. Maka armada ini bertekad sebulat hati untuk <span class="font-bold text-gray-900">penuhkan tong dan pulang sebagai legenda</span>.
                         </p>
                     </div>
 
@@ -452,7 +458,7 @@
 
                     <!-- Trivia Tech MOVED here (Bottom of section) -->
                     <div class="text-xs bg-purple-50 p-3 rounded-lg border border-purple-100 text-purple-800 mt-2">
-                        <i class="fa-solid fa-robot text-purple-500 mr-1"></i> <strong>Trivia Tech:</strong> Website ini dibangunkan khas dengan kerjasama <span class="font-bold text-purple-700">Gemini</span> dan <span class="font-bold text-purple-700">ChatGpt</span> untuk melicinkan urusan anda.
+                        <i class="fa-solid fa-robot text-purple-500 mr-1"></i> <strong>Trivia Tech:</strong> Laman ini dihasilkan melalui kerjasama sistem <span class="font-bold text-purple-700">Gemini</span> dan <span class="font-bold text-purple-700">ChatGpt</span> bagi memastikan semua urusan pengguna diproses dengan pantas, tepat dan tanpa ralat.
                     </div>
                 </div>
             </div>
@@ -462,7 +468,7 @@
             <div class="space-y-6">
                 
                 <!-- 1. Checklist Barang -->
-                <div class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit border border-gray-100">
+                <div id="checklistSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit border border-gray-100">
                     <div class="bg-slate-800 p-4 text-white flex justify-between items-center">
                         <h3 class="font-bold text-sm flex items-center gap-2">
                             <i class="fa-solid fa-clipboard-check text-emerald-400"></i> Checklist Angler
@@ -794,13 +800,13 @@
                             <i class="fa-solid fa-circle-question text-yellow-500"></i> Pusat Bantuan
                         </h2>
                         <p class="text-xs text-gray-600 mt-1">
-                            "Sesat jalan boleh tanya Waze, sesat dalam program tanya Pengurus!"
+                            "Sesat jalan boleh tanya Waze, sesat dalam program tanya Admin Squad!"
                         </p>
                     </div>
                     
                     <div class="p-4 bg-white">
                         <p class="text-xs text-gray-600 mb-4 text-justify leading-relaxed">
-                            Pemburu, kalau ada sebarang masalah berbangkit—tak cukup bajet nak bayar, tak tahu nak naik kereta siapa, atau nak request lagu masa karaoke atas bot nanti—jangan segan silu. Terus roger dua <strong>"Iron Man"</strong> kita ni. Mereka sedia berkhidmat demi kelancaran misi sotong kita!
+                            Adapun sekiranya timbul apa jua kesukaran sama ada kekurangan belanja, tidak diketahui hendak menumpang kereta siapa, ataupun ingin memohon lagu tatkala kita berkaraoke di atas perahu kelak, maka janganlah pemburu sekalian malu atau segan. Syahadan, rogerlah segera kedua <strong>"Iron Man"</strong> kita itu kerana merekalah yang sudi berkhidmat demi kelancaran segala urusan misi sotong ini.
                         </p>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
