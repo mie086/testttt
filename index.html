@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabung Misi Pemburuan Sotong</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js untuk graf visual -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #0f172a;
+            /* Background Image: Night Sea Texture */
+            background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(6, 78, 59, 0.7)), url('https://images.unsplash.com/photo-1502758775495-9d33a651921a?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            /* UPDATED: Allow scrolling in all directions for compact view */
+            overflow: auto; 
+            margin: 0;
+            padding: 0;
+        } 
+        
+        /* Wrapper for Mobile Screen Resolution and Scroll Effect */
+        #mobile-wrapper {
+            max-width: 480px; /* Max width for high-resolution mobile view */
+            /* Forces content wider than 480px to be scrollable horizontally */
+            min-width: 100%; 
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: #1e293b; /* Dark background inside the phone frame */
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        @media (min-width: 481px) {
+             #mobile-wrapper {
+                min-width: 480px;
+             }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .bg-ocean {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+        }
+        .edit-input {
+            width: 80px;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        /* New Animation for Squid Icon */
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Scroll To Top Button: Position fixed relative to mobile wrapper */
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px; /* Aligned to the viewport */
+            z-index: 99;
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+        
+        #scrollToTopBtn.show {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        /* Sidebar Transition */
+        #sideMenu {
+            transition: transform 0.3s ease-in-out;
+        }
+        /* Image Slider Styles */
+        .image-slider {
+            width: 100%;
+            height: 250px; /* Saiz standard slider */
+            overflow: hidden;
+            position: relative;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+        .slider-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .slider-image.active {
+            opacity: 1;
+        }
+        
+        /* FIX: Ensure content inside Top Stat cards is aligned and clean */
+        .stat-content {
+            height: 100%; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        /* Custom class for clickable stat cards */
+        .stat-card-link {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .stat-card-link:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body class="text-gray-800 pb-0">
+
+    <!-- SIDEBAR MENU (Hidden by default) -->
+    <div id="menuOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm transition-opacity"></div>
+    <div id="sideMenu" class="fixed inset-y-0 left-0 w-64 bg-slate-900/95 backdrop-blur-xl z-[70] transform -translate-x-full border-r border-white/10 shadow-2xl flex flex-col">
+        <!-- Menu Header -->
+        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-slate-800/50">
+            <h2 class="text-emerald-400 font-bold text-lg flex items-center gap-2">
+                <i class="fa-solid fa-bars-staggered"></i> Menu
+            </h2>
+            <button onclick="toggleMenu()" class="text-gray-400 hover:text-white transition w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- Menu Links -->
+        <div class="p-4 flex-1 overflow-y-auto">
+            <ul class="space-y-2">
+                <!-- Utama Link -->
+                <li>
+                    <a href="#" onclick="scrollToTopAndCloseMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-indigo-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-indigo-500/10 text-indigo-400 p-2 rounded-md group-hover:bg-indigo-500 group-hover:text-white transition"><i class="fa-solid fa-house w-4 text-center"></i></span>
+                        <span class="font-medium">Utama</span>
+                    </a>
+                </li>
+                
+                <!-- NEW: Pengenalan Link -->
+                <li>
+                    <a href="#introSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-purple-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-purple-500/10 text-purple-400 p-2 rounded-md group-hover:bg-purple-500 group-hover:text-white transition"><i class="fa-solid fa-circle-info w-4 text-center"></i></span>
+                        <span class="font-medium">Pengenalan</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#memberSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-emerald-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-emerald-500/10 text-emerald-400 p-2 rounded-md group-hover:bg-emerald-500 group-hover:text-white transition"><i class="fa-solid fa-users w-4 text-center"></i></span>
+                        <span class="font-medium">Senarai Ahli</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#missionSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-blue-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-blue-500/10 text-blue-400 p-2 rounded-md group-hover:bg-blue-500 group-hover:text-white transition"><i class="fa-solid fa-anchor w-4 text-center"></i></span>
+                        <span class="font-medium">Misi Pemburu</span>
+                    </a>
+                </li>
+                 <li>
+                    <a href="#tentativeSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-indigo-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-indigo-500/10 text-indigo-400 p-2 rounded-md group-hover:bg-indigo-500 group-hover:text-white transition"><i class="fa-solid fa-map-location-dot w-4 text-center"></i></span>
+                        <span class="font-medium">Tentatif Program</span>
+                    </a>
+                </li>
+                <!-- Updated Menu Link for Finance -->
+                <li>
+                    <a href="#financeSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-teal-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-teal-500/10 text-teal-400 p-2 rounded-md group-hover:bg-teal-500 group-hover:text-white transition"><i class="fa-solid fa-wallet w-4 text-center"></i></span>
+                        <span class="font-medium">Kewangan & Bayaran</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#expensesSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-orange-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-orange-500/10 text-orange-400 p-2 rounded-md group-hover:bg-orange-500 group-hover:text-white transition"><i class="fa-solid fa-receipt w-4 text-center"></i></span>
+                        <span class="font-medium">Laporan Dana</span>
+                    </a>
+                </li>
+                 <!-- Updated Menu Link for Gallery -->
+                 <li>
+                    <a href="#gallerySection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-pink-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-pink-500/10 text-pink-400 p-2 rounded-md group-hover:bg-pink-500 group-hover:text-white transition"><i class="fa-solid fa-camera-retro w-4 text-center"></i></span>
+                        <span class="font-medium">Galeri Kenangan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#helpSection" onclick="toggleMenu()" class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-yellow-600/20 p-3 rounded-lg transition group">
+                        <span class="bg-yellow-500/10 text-yellow-400 p-2 rounded-md group-hover:bg-yellow-500 group-hover:text-white transition"><i class="fa-solid fa-circle-question w-4 text-center"></i></span>
+                        <span class="font-medium">Bantuan</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Menu Footer -->
+        <div class="p-4 border-t border-white/10 text-center">
+             <p class="text-xs text-gray-500">Misi Sotong 2026</p>
+        </div>
+    </div>
+    
+    <!-- WRAPPER FOR MOBILE SCREEN RESOLUTION (Restored) -->
+    <div id="mobile-wrapper" class="relative">
+
+        <!-- Navbar / Header -->
+        <nav class="bg-gradient-to-r from-slate-900 via-blue-900 to-emerald-900 text-white p-4 shadow-lg sticky top-0 z-50 border-b border-blue-800/50 backdrop-blur-md bg-opacity-90">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    
+                    <!-- MENU TOGGLE BUTTON -->
+                    <button onclick="toggleMenu()" class="text-white hover:text-emerald-300 transition focus:outline-none bg-white/10 hover:bg-white/20 p-2 rounded-lg backdrop-blur-sm border border-white/10 mr-1">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+
+                    <!-- Squid Icon Box - NOW FUNCTIONS AS SCROLL TO TOP / UTAMA -->
+                    <div onclick="scrollToTop()" class="bg-white/10 p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-inner float-animation cursor-pointer ml-3" title="Kembali ke Utama">
+                        <span class="text-3xl filter drop-shadow-md">🦑</span>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight tracking-wide uppercase" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                            Tabung Misi <span class="text-emerald-300">Pemburuan Sotong</span>
+                        </h1>
+                        <!-- FIX: Use block container for the two lines of info for better vertical stacking -->
+                        <div class="text-xs text-blue-200 opacity-90 mt-0.5">
+                            <!-- Line 1 -->
+                            <p class="flex items-center gap-1">
+                                <i class="fa-solid fa-water text-[10px]"></i> Laut China Selatan
+                            </p>
+                            <!-- Line 2: Date is now on its own line -->
+                            <p class="flex items-center gap-1">
+                                <i class="fa-solid fa-calendar-days text-[10px]"></i> 1 Mei 2026
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button id="authBtn" onclick="toggleAdminMode()" class="text-sm bg-blue-800/50 hover:bg-blue-700 hover:shadow-md px-4 py-2 rounded-lg transition border border-blue-500/50 flex items-center gap-2 backdrop-blur-sm">
+                        <i class="fa-solid fa-lock text-xs"></i> <span class="hidden md:inline">Admin Login</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="p-4 md:p-6 space-y-6">
+
+            <!-- NEW: Image Slider Section -->
+            <div class="image-slider">
+                <img class="slider-image active" src="https://placehold.co/1920x250/0f172a/ffffff?text=Candat+Malam+1" onerror="this.onerror=null; this.src='https://placehold.co/1920x250/0f172a/ffffff?text=Candat+Malam+1'" alt="Gambar Mencadat Sotong 1">
+                <img class="slider-image" src="https://placehold.co/1920x250/10b981/ffffff?text=Lampu+Pukat+Memanggil+Sotong" onerror="this.onerror=null; this.src='https://placehold.co/1920x250/10b981/ffffff?text=Lampu+Pukat+Memanggil+Sotong'" alt="Gambar Mencadat Sotong 2">
+                <img class="slider-image" src="https://placehold.co/1920x250/3b82f6/ffffff?text=Bot+Penuh+Semangat" onerror="this.onerror=null; this.src='https://placehold.co/1920x250/3b82f6/ffffff?text=Bot+Penuh+Semangat'" alt="Gambar Mencadat Sotong 3">
+            </div>
+            <!-- END NEW: Image Slider Section -->
+
+            <!-- NEW: Introduction Section (Added ID for scrolling) -->
+            <div id="introSection" class="glass-panel rounded-2xl p-6 shadow-lg border-l-4 border-purple-500 relative overflow-hidden scroll-mt-28">
+                <div class="absolute right-0 top-0 opacity-5 transform translate-x-10 -translate-y-10">
+                    <i class="fa-solid fa-quote-right text-9xl text-purple-900"></i>
+                </div>
+                <h2 class="font-bold text-xl text-gray-800 mb-3 flex items-center gap-2 relative z-10">
+                    <i class="fa-solid fa-circle-info text-purple-600"></i> Pengenalan Misi
+                </h2>
+                <div class="text-gray-700 text-sm leading-relaxed space-y-3 relative z-10 text-justify">
+                    <p>
+                        Selamat datang ke hab rasmi <span class="text-emerald-600 font-bold">Misi Pemburuan Sotong 2026</span>! Ini bukan sekadar trip biasa, ini adalah panggilan memburu di Laut China Selatan yang digerakkan oleh dua 'tulang belakang' padu kita, <span class="font-bold text-gray-900">ManRemy</span> dan <span class="font-bold text-gray-900">John</span>. Tanpa komitmen padu orang kuat ini, mungkin impian nak merasa sotong segar celup tepung atas bot tinggal angan-angan saja!
+                    </p>
+                    <p>
+                        Melihat kepada semangat ahli-ahli lain yang dah mula 'lock' tarikh dan asah candat masing-masing, aura kejayaan misi ini dah mula terasa. Semuanya bersatu hati demi satu matlamat: Penuhkan tong!
+                    </p>
+                    <p class="text-xs bg-purple-50 p-3 rounded-lg border border-purple-100 text-purple-800">
+                        <i class="fa-solid fa-robot text-purple-500 mr-1"></i> <strong>Trivia Tech:</strong> Website pemudah cara yang canggih ini dibangunkan khas dengan kerjasama <span class="font-bold text-purple-700">Gemini</span>, platform AI yang berdedikasi memastikan pengurusan dana dan info program anda berjalan licin tanpa pening kepala.
+                    </p>
+                </div>
+            </div>
+            <!-- END NEW: Introduction Section -->
+
+            <!-- Top Stats Section (Now stacks vertically by default) -->
+            <div class="grid grid-cols-2 gap-4">
+                
+                <!-- Card 1: Countdown - NOW CLICKABLE -->
+                <div class="glass-panel rounded-2xl p-4 shadow-sm border-l-4 border-blue-500 relative overflow-hidden stat-card-link" onclick="document.getElementById('memberSection').scrollIntoView({behavior: 'smooth'})">
+                    <div class="stat-content">
+                        <div class="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-2">
+                            <i class="fa-solid fa-hourglass-half text-6xl text-blue-800"></i>
+                        </div>
+                        <h3 class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Masa Tinggal</h3>
+                        <!-- FIX: Increased text size and reduced mt-1 to prevent overlap -->
+                        <span id="countdownDisplay" class="text-xl font-bold text-blue-600 leading-tight">0 Bulan 0 Hari</span>
+                        <span id="totalDaysDebug" class="text-[10px] text-gray-400 mt-0.5"></span>
+                        <p class="text-xs text-gray-400">Sehingga 1 Mei 2026</p>
+                    </div>
+                </div>
+
+                <!-- Card 2: Total Progress - NOW CLICKABLE -->
+                <div class="glass-panel rounded-2xl p-4 shadow-sm border-l-4 border-emerald-500 relative overflow-hidden stat-card-link" onclick="document.getElementById('memberSection').scrollIntoView({behavior: 'smooth'})">
+                     <div class="stat-content">
+                         <div class="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-2">
+                            <i class="fa-solid fa-sack-dollar text-6xl text-emerald-800"></i>
+                        </div>
+                        <h3 class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Jumlah Terkumpul</h3>
+                        <!-- FIX: Increased text size -->
+                        <span id="totalCollectedDisplay" class="text-3xl font-bold text-emerald-600 leading-tight">RM 0</span>
+                        
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                            <div id="progressBar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                        <p class="text-[10px] text-gray-500 mt-1 flex justify-between">
+                            <span id="percentDisplay">0%</span>
+                            <span>Sasaran: RM 5,000</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 3: Calculator Teaser / Hab Kewangan - CLICKABLE -->
+                <div class="bg-gradient-to-br from-indigo-600 to-purple-700 text-white rounded-2xl p-4 shadow-md flex flex-col justify-between items-start stat-card-link" onclick="document.getElementById('financeSection').scrollIntoView({behavior: 'smooth'})">
+                    <h3 class="font-bold text-base mb-1 flex items-center gap-2"><i class="fa-solid fa-wallet"></i> Hab Kewangan</h3>
+                    <p class="text-indigo-100 text-xs mb-2">Kira bajet & terus bayar!</p>
+                    <button class="bg-white text-indigo-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm w-full">
+                        Kira Sekarang
+                    </button>
+                </div>
+
+                <!-- Card 4: Expenses Report Teaser / Laporan Dana - CLICKABLE -->
+                <div class="bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-2xl p-4 shadow-md flex flex-col justify-between items-start stat-card-link" onclick="document.getElementById('expensesSection').scrollIntoView({behavior: 'smooth'})">
+                    <h3 class="font-bold text-base mb-1 flex items-center gap-2"><i class="fa-solid fa-receipt"></i> Laporan Dana</h3>
+                    <p class="text-orange-100 text-xs mb-2">Lihat rekod perbelanjaan terkini.</p>
+                    <button class="bg-white text-orange-600 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm w-full">
+                        Lihat Laporan
+                    </button>
+                </div>
+            </div>
+            
+            <!-- NEW: Shortcut Row for Galeri & Bantuan -->
+            <div class="grid grid-cols-2 gap-4">
+                
+                <!-- NEW Card 5: Galeri Kenangan Shortcut -->
+                <div class="bg-gradient-to-br from-pink-600 to-rose-700 text-white rounded-2xl p-4 shadow-md flex items-center gap-3 stat-card-link" onclick="document.getElementById('gallerySection').scrollIntoView({behavior: 'smooth'})">
+                    <div class="bg-white/20 p-2 rounded-full">
+                        <i class="fa-solid fa-camera-retro text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base">Galeri Kenangan</h3>
+                        <p class="text-pink-100 text-xs">Pautan ke album trip.</p>
+                    </div>
+                </div>
+
+                <!-- NEW Card 6: Pusat Bantuan Shortcut -->
+                <div class="bg-gradient-to-br from-yellow-500 to-orange-500 text-white rounded-2xl p-4 shadow-md flex items-center gap-3 stat-card-link" onclick="document.getElementById('helpSection').scrollIntoView({behavior: 'smooth'})">
+                     <div class="bg-white/20 p-2 rounded-full">
+                        <i class="fa-solid fa-circle-question text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base">Pusat Bantuan</h3>
+                        <p class="text-yellow-100 text-xs">Hubungi Admin Squad.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- END NEW SHORTCUT ROW -->
+
+            <!-- Main Content Sections (Stacked Vertically for Mobile View) -->
+            <div class="space-y-6">
+                
+                <!-- 1. Participant Table -->
+                <!-- Added ID for anchor scrolling -->
+                <div id="memberSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit scroll-mt-28">
+                    <!-- NEW THEMED HEADER FOR MEMBER SECTION -->
+                    <div class="bg-gradient-to-r from-blue-900 to-slate-900 p-4 relative overflow-hidden text-white border-b border-white/20">
+                        <!-- Watermark Icon -->
+                        <div class="absolute right-3 top-3 opacity-20 transform scale-150 rotate-12">
+                            <i class="fa-solid fa-users text-5xl"></i>
+                        </div>
+                        
+                        <!-- Title and Subtitle -->
+                        <div class="flex justify-between items-center relative z-10">
+                            <div class="flex flex-col">
+                                <h2 class="font-extrabold text-xl leading-snug" id="tableTitle">Skuad Hanyir Sotong</h2>
+                                <p class="text-xs font-medium text-blue-200 uppercase tracking-widest">Komanden Misi (10 Ahli)</p>
+                            </div>
+                             <!-- Admin Controls Integrated -->
+                            <span id="adminBadge" class="hidden bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-200 animate-pulse z-20">ADMIN MODE</span>
+                        </div>
+                        
+                        <!-- Add Member Button (Admin Only) -->
+                        <div class="mt-3 flex justify-end">
+                            <button id="addMemberBtn" onclick="addMember()" class="hidden bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-full hover:bg-emerald-600 shadow-lg shadow-emerald-900/50 transition transform active:scale-95">
+                                <i class="fa-solid fa-plus mr-1"></i> Tambah Ahli
+                            </button>
+                        </div>
+                    </div>
+                    <!-- END NEW THEMED HEADER -->
+                    
+                    <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="sticky top-0 bg-gray-50 shadow-sm z-10">
+                                <tr class="text-gray-500 text-[10px] uppercase">
+                                    <th class="p-3 font-semibold">Nama</th>
+                                    <th class="p-3 font-semibold text-center">Prog.</th>
+                                    <th class="p-3 font-semibold text-right">Bayar</th>
+                                    <th class="p-3 font-semibold text-right">Baki</th>
+                                    <th class="p-3 font-semibold text-center admin-col hidden">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="memberTableBody" class="divide-y divide-gray-100 bg-white">
+                                <!-- Rows injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. Info Panel "Pemburu Sotong" -->
+                <div id="missionSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit border border-blue-100 scroll-mt-28">
+                    <!-- Header with Ocean Theme -->
+                    <div class="bg-ocean p-4 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 opacity-10 transform translate-x-4 -translate-y-4">
+                            <i class="fa-solid fa-anchor text-8xl"></i>
+                        </div>
+                        <h2 class="font-bold text-lg text-white mb-1 flex items-center gap-2">
+                            <i class="fa-solid fa-ship"></i> Misi Pemburu Sotong
+                        </h2>
+                        <p class="text-blue-200 text-xs uppercase tracking-wider">Edisi 2026: Laut China Selatan</p>
+                    </div>
+                    
+                    <div class="p-4 bg-white space-y-4">
+                        <!-- Welcome Message -->
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-sm mb-2 border-l-4 border-blue-600 pl-2">Kata Aluan Kapten</h3>
+                            <p class="text-xs text-gray-600 leading-relaxed italic text-justify">
+                                "Salam Geng! Kasi 'lock' mental dan fizikal korang sebab kita bakal gegarkan Laut China Selatan dengan ekspedisi mencadat paling padu abad ini! Ombak rindu dah memanggil-manggil, joran pun dah menggigil nak beraksi. Tapi relaks, <span class="text-blue-700 font-bold">jangan risau pasal hasil sebab kita ada senjata rahsia: Abang Zasss, 'player' paling otai dalam arena fishing! Bila dia turun padang, sotong pun berebut-rebut nak naik bot sampai penuh tong—memang takkan kumpau punya!</span> Standby ubat mabuk laut siap-siap, kita kasi 'strike' sampai lebam!"
+                            </p>
+                        </div>
+
+                        <!-- Mission Targets -->
+                        <div>
+                             <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-emerald-500 pl-2">Target Operasi</h3>
+                             <ul class="space-y-3">
+                                 <li class="flex items-start gap-3 text-xs text-gray-600">
+                                     <div class="bg-blue-100 p-1.5 rounded-lg text-blue-600">
+                                         <i class="fa-solid fa-weight-hanging text-sm"></i>
+                                     </div>
+                                     <div>
+                                         <span class="font-bold block text-gray-800">50kg Hasil Tangkapan</span>
+                                         Penuhkan tong ikan sampai tak muat.
+                                     </div>
+                                 </li>
+                                 <li class="flex items-start gap-3 text-xs text-gray-600">
+                                     <div class="bg-purple-100 p-1.5 rounded-lg text-purple-600">
+                                         <i class="fa-solid fa-utensils text-sm"></i>
+                                     </div>
+                                     <div>
+                                         <span class="font-bold block text-gray-800">Sotong Celup Tepung</span>
+                                         Masak segar atas bot. Fuhh!
+                                     </div>
+                                 </li>
+                                 <li class="flex items-start gap-3 text-xs text-gray-600">
+                                     <div class="bg-orange-100 p-1.5 rounded-lg text-orange-600">
+                                         <i class="fa-solid fa-handshake text-sm"></i>
+                                     </div>
+                                     <div>
+                                         <span class="font-bold block text-gray-800">Ukhwah Fillah</span>
+                                         Eratkan silaturrahim, borak sampai pagi.
+                                     </div>
+                                 </li>
+                             </ul>
+                        </div>
+                        
+                        <!-- Motto -->
+                        <div class="bg-gray-50 p-3 rounded-xl text-center border border-gray-100">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Motto Rasmi</p>
+                            <p class="font-serif text-sm text-blue-900 font-bold">"Selagi Tak Dapat, Jangan Mimpi Nak Balik! Biar Rentung Di Laut, Janji Tak Malu Di Darat!"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Checklist Barang -->
+                <div class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit border border-gray-100">
+                    <div class="bg-slate-800 p-4 text-white flex justify-between items-center">
+                        <h3 class="font-bold text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-check text-emerald-400"></i> Checklist Angler
+                        </h3>
+                        <span class="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Wajib Bawa!</span>
+                    </div>
+                    <div class="p-4 bg-white">
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
+                                <span class="sm text-gray-700 group-hover:text-emerald-700">Joran & Mesin (Check drag!)</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
+                                <span class="text-sm text-gray-700 group-hover:text-emerald-700">Candat (Spare banyak sikit)</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
+                                <span class="text-sm text-gray-700 group-hover:text-emerald-700">Baju Hujan (Laut tak menentu)</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
+                                <span class="text-sm text-gray-700 group-hover:text-emerald-700">Headlamp (Suluh sotong)</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
+                                <span class="sm text-gray-700 group-hover:text-emerald-700">Ubat Mabuk / Minyak Angin</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Tentatif Program -->
+                <div id="tentativeSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit border border-gray-100 scroll-mt-28">
+                    <div class="bg-indigo-900 p-4 text-white flex justify-between items-center">
+                        <h3 class="font-bold text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-yellow-400"></i> Tentatif Program
+                        </h3>
+                        <span class="text-[10px] text-indigo-200 bg-indigo-800 px-2 py-1 rounded">2H 1M</span>
+                    </div>
+                    <div class="p-4 bg-white relative">
+                        <!-- Timeline Vertical Line -->
+                        <div class="absolute left-8 top-6 bottom-6 w-0.5 bg-gray-100"></div>
+                        
+                        <div class="space-y-6 relative">
+                            <!-- Item 1 -->
+                            <div class="flex gap-4 items-start">
+                                <div class="bg-indigo-100 text-indigo-600 w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 border-2 border-white shadow-sm">
+                                    <i class="fa-solid fa-car text-xs"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 block mb-0.5 uppercase tracking-wide">3:00 PM (Hari 1)</span>
+                                    <h4 class="font-bold text-sm text-gray-800">Kumpul di Jeti Marang</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">Loading barang, briefing kapten & doa selamat.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Item 2 -->
+                            <div class="flex gap-4 items-start">
+                                <div class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 border-2 border-white shadow-sm">
+                                    <i class="fa-solid fa-ship text-xs"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 block mb-0.5 uppercase tracking-wide">5:00 PM</span>
+                                    <h4 class="font-bold text-sm text-gray-800">Bertolak ke Spot Tukun</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">Perjalanan ~2 jam. Solat Asar & Maghrib atas bot.</p>
+                                </div>
+                            </div>
+
+                            <!-- Item 3 -->
+                            <div class="flex gap-4 items-start">
+                                <div class="bg-emerald-100 text-emerald-600 w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 border-2 border-white shadow-sm">
+                                    <i class="fa-solid fa-fish-fins text-xs"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 block mb-0.5 uppercase tracking-wide">8:00 PM - Subuh</span>
+                                    <h4 class="font-bold text-sm text-gray-800">Operasi Mencadat!</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">Jigging, candat mayat & sesi "Sotong Celup Tepung" segar.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Item 4 -->
+                            <div class="flex gap-4 items-start">
+                                <div class="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 border-2 border-white shadow-sm">
+                                    <i class="fa-solid fa-house-flag text-xs"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 block mb-0.5 uppercase tracking-wide">10:00 AM (Hari 2)</span>
+                                    <h4 class="font-bold text-sm text-gray-800">Sampai Jeti</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">Bahagi hasil sama rata, salam perpisahan & bersurai.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Finance Hub (Calculator + Payment MERGED) -->
+                <div id="financeSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden scroll-mt-28 border border-teal-200">
+                    <div class="bg-gradient-to-r from-teal-800 to-emerald-900 p-4 relative overflow-hidden text-white">
+                         <div class="absolute right-0 top-0 opacity-10 transform translate-x-2 -translate-y-2">
+                             <i class="fa-solid fa-wallet text-8xl"></i>
+                        </div>
+                        <h2 class="font-bold text-lg mb-1 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-money-bill-transfer"></i> Pusat Kewangan
+                        </h2>
+                        <p class="text-teal-200 text-xs uppercase tracking-wider relative z-10">Kira Bajet & Terus Bayar</p>
+                    </div>
+
+                    <div class="p-4 bg-white">
+                        <!-- Desktop Grid / Mobile Stack -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:divide-x md:divide-gray-100">
+                            
+                            <!-- LEFT COLUMN: CALCULATOR -->
+                            <div class="flex flex-col gap-4">
+                                <div>
+                                    <h3 class="font-bold text-sm text-gray-700 mb-2 flex items-center gap-2">
+                                        <i class="fa-solid fa-calculator text-indigo-500"></i> Kalkulator Simpanan
+                                    </h3>
+                                    <p class="text-xs text-gray-500 mb-3 leading-relaxed">
+                                        Masukkan jumlah yang dah kumpul, sistem akan kira berapa lagi kena simpan seminggu. Jangan 'kumpau' bayar sudah!
+                                    </p>
+                                    
+                                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 mb-3">
+                                        <label class="block text-[10px] font-bold text-indigo-800 uppercase mb-1">Duit Dalam Tangan (RM)</label>
+                                        <div class="relative">
+                                            <span class="absolute left-3 top-2.5 text-gray-400 font-bold text-sm">RM</span>
+                                            <input type="number" id="calcCurrentSavings" placeholder="50" class="w-full pl-10 p-2 text-sm border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition font-bold text-gray-700" oninput="calculateSavings()">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between items-center mb-2 border-b border-dashed border-gray-200 pb-2">
+                                        <span class="text-xs text-gray-500">Baki Diperlukan:</span>
+                                        <span id="calcNeeded" class="font-bold text-lg text-indigo-700">RM 500</span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="bg-gray-50 p-2 rounded-lg text-center border border-gray-100">
+                                            <span class="block text-[9px] text-gray-400 uppercase">Simpan Bulanan</span>
+                                            <span id="calcMonthly" class="block text-sm font-bold text-emerald-600">RM 0</span>
+                                        </div>
+                                        <div class="bg-gray-50 p-2 rounded-lg text-center border border-gray-100">
+                                            <span class="block text-[9px] text-gray-400 uppercase">Simpan Mingguan</span>
+                                            <span id="calcWeekly" class="block text-sm font-bold text-blue-600">RM 0</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="calcSuggestion" class="mt-3 text-[10px] text-indigo-800 bg-indigo-50 p-2 rounded-lg text-center hidden border border-indigo-100">
+                                        <i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> <span id="calcSuggestionText"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- RIGHT COLUMN: PAYMENT (Mobile: Separator Line Added via CSS) -->
+                            <div class="flex flex-col items-center text-center pt-4 md:pt-0 border-t md:border-t-0 border-gray-100">
+                                <h3 class="font-bold text-sm text-gray-700 mb-2 flex items-center gap-2">
+                                    <i class="fa-solid fa-qrcode text-teal-600"></i> Imbas & Bayar
+                                </h3>
+                                <p class="text-xs text-gray-500 mb-4">
+                                    Dah cukup duit? Terus transfer sini.
+                                </p>
+                                
+                                <!-- QR Placeholder -->
+                                <div class="bg-white p-2 rounded-xl border-2 border-dashed border-teal-300 mb-3 w-32 h-32 flex items-center justify-center relative overflow-hidden group shadow-sm">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DuitNow-Transfer-To-Hariz-Tabung-Sotong" alt="QR Bayaran" class="w-full h-full opacity-90 group-hover:scale-110 transition-transform duration-500">
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-2 w-full max-w-[200px] mb-3 border border-gray-100">
+                                    <p class="text-[10px] text-gray-400 uppercase">Bank Transfer</p>
+                                    <p class="text-xs font-bold text-gray-800">Maybank (Hariz)</p>
+                                    <p class="text-xs font-mono text-gray-600 tracking-wider">1640 5588 9911</p>
+                                    <button onclick="navigator.clipboard.writeText('164055889911'); alert('No Akaun Disalin!')" class="text-[9px] text-blue-500 hover:underline mt-1 cursor-pointer">
+                                        <i class="fa-regular fa-copy"></i> Salin No. Akaun
+                                    </button>
+                                </div>
+
+                                <!-- Important Note (Compact) -->
+                                <div class="flex gap-2 items-start text-left bg-yellow-50 p-2 rounded-lg border border-yellow-100 w-full">
+                                    <i class="fa-solid fa-circle-exclamation text-yellow-500 text-xs mt-0.5"></i>
+                                    <div>
+                                        <p class="text-[10px] text-yellow-800 leading-tight">
+                                            Lepas bayar, <strong>WAJIB</strong> hantar resit ke Hariz!
+                                        </p>
+                                        <button onclick="alert('Mendail Hariz...')" class="mt-1 bg-green-500 text-white text-[9px] px-2 py-0.5 rounded-full hover:bg-green-600 transition shadow-sm">
+                                            <i class="fa-brands fa-whatsapp"></i> Wasap Hariz
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. EXPENSES / FUND USAGE SECTION (Renumbered) -->
+                <div id="expensesSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden mt-6 scroll-mt-24">
+                    <div class="p-4 border-b border-gray-100 flex flex-col justify-between items-start bg-white gap-3">
+                        <div>
+                            <h2 class="font-bold text-lg text-gray-700 flex items-center gap-2">
+                                <i class="fa-solid fa-receipt text-orange-500"></i> Laporan Penggunaan Dana
+                            </h2>
+                            <p class="text-xs text-gray-500">Rekod ke mana duit tabung dibelanjakan.</p>
+                        </div>
+                        
+                        <!-- Financial Summary Badge -->
+                        <div class="flex gap-2 text-xs bg-gray-50 p-2 rounded-lg border border-gray-100 w-full justify-around">
+                            <div class="text-center px-1">
+                                <div class="text-[10px] text-gray-400 uppercase">Terkumpul</div>
+                                <div class="font-bold text-emerald-600" id="summaryCollected">RM 0</div>
+                            </div>
+                            <div class="w-px bg-gray-300"></div>
+                            <div class="text-center px-1">
+                                <div class="text-[10px] text-gray-400 uppercase">Belanja</div>
+                                <div class="font-bold text-red-500" id="summaryExpenses">RM 0</div>
+                            </div>
+                            <div class="w-px bg-gray-300"></div>
+                            <div class="text-center px-1">
+                                <div class="text-[10px] text-gray-400 uppercase">Baki Bersih</div>
+                                <div class="font-bold text-blue-600" id="summaryNetBalance">RM 0</div>
+                            </div>
+                        </div>
+
+                        <button id="addExpenseBtn" onclick="openExpenseModal()" class="hidden bg-orange-500 text-white text-sm px-3 py-1.5 rounded hover:bg-orange-600 shadow-sm transition transform active:scale-95 w-full mt-2">
+                            <i class="fa-solid fa-plus mr-1"></i> Tambah Belanja
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <!-- UPDATED: Removed separate 'Perincian' header, merged into 'Kategori' -->
+                            <thead class="bg-orange-50 text-orange-800 text-[10px] uppercase">
+                                <tr>
+                                    <th class="p-3 font-semibold w-24">Tarikh</th>
+                                    <th class="p-3 font-semibold">Kategori & Perincian</th>
+                                    <th class="p-3 font-semibold text-right w-24">Jumlah (RM)</th>
+                                    <th class="p-3 font-semibold text-center admin-col hidden w-20">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTableBody" class="divide-y divide-gray-100 bg-white">
+                                <!-- Expenses injected via JS -->
+                            </tbody>
+                        </table>
+                        <div id="noExpensesMsg" class="p-6 text-center text-gray-400 hidden text-sm">
+                            Tiada rekod perbelanjaan lagi.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Gallery Section (MOVED DOWN) -->
+                <div id="gallerySection" class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit border border-pink-200 scroll-mt-28 mt-6">
+                    <div class="bg-gradient-to-r from-pink-800 to-rose-900 p-4 relative overflow-hidden text-white">
+                        <div class="absolute right-0 top-0 opacity-10 transform translate-x-2 -translate-y-2">
+                             <i class="fa-solid fa-images text-8xl"></i>
+                        </div>
+                        <h2 class="font-bold text-lg mb-1 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-camera-retro"></i> Galeri Kenangan
+                        </h2>
+                        <p class="text-pink-200 text-xs uppercase tracking-wider relative z-10">Koleksi Gambar & Video Trip</p>
+                    </div>
+                    
+                    <div class="p-8 bg-gray-50 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[200px]">
+                        
+                         <!-- Maintenance Graphic -->
+                        <div class="bg-white p-4 rounded-full shadow-lg mb-4 relative z-10 animate-bounce border-4 border-pink-100">
+                            <i class="fa-solid fa-person-digging text-4xl text-pink-500"></i>
+                        </div>
+
+                        <h3 class="font-bold text-gray-800 text-base mb-2 relative z-10">Under Maintenance</h3>
+                        <!-- UPDATED TEXT -->
+                        <p class="text-sm text-gray-500 max-w-xs leading-relaxed relative z-10">
+                            Sila Berhubung atau Berjumpa dengan Admin Squad!. Terima Kasih.
+                        </p>
+                        
+                        <div class="mt-6 px-4 py-1.5 bg-gray-200 rounded-full text-xs font-mono text-gray-600 relative z-10 border border-gray-300">
+                            Status: Coming Soon...
+                        </div>
+
+                        <!-- Background decoration -->
+                        <div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: radial-gradient(#db2777 1px, transparent 1px); background-size: 20px 20px;"></div>
+                    </div>
+                </div>
+
+                <!-- 8. Help / Enquiries Section (Renumbered) -->
+                <div id="helpSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden mt-6 scroll-mt-24 border-l-4 border-yellow-400">
+                    <div class="p-4 bg-yellow-50 border-b border-yellow-100">
+                        <h2 class="font-bold text-lg text-gray-800 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-question text-yellow-500"></i> Pusat Bantuan
+                        </h2>
+                        <p class="text-xs text-gray-600 mt-1">
+                            "Sesat jalan boleh tanya Waze, sesat dalam program tanya Pengurus!"
+                        </p>
+                    </div>
+                    
+                    <div class="p-4 bg-white">
+                        <p class="text-xs text-gray-600 mb-4 text-justify leading-relaxed">
+                            Geng, kalau ada sebarang masalah berbangkit—tak cukup bajet nak bayar, tak tahu nak naik kereta siapa, atau nak request lagu masa karaoke atas bot nanti—jangan segan silu. Terus roger dua <strong>"Iron Man"</strong> kita ni. Mereka sedia berkhidmat demi kelancaran misi sotong kita!
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Manager 1: John (Updated to ADMIN SQUAD) -->
+                            <div class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:shadow-md transition bg-gradient-to-br from-blue-50 to-white">
+                                <div class="w-12 h-12 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 font-bold text-xl border-2 border-white shadow-sm">
+                                    J
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm text-gray-800">John</h4>
+                                    <!-- UPDATED: Gelaran ringkas -->
+                                    <span class="text-[10px] text-blue-600 font-medium uppercase tracking-wide bg-blue-100 px-1.5 py-0.5 rounded">ADMIN SQUAD</span>
+                                    <div class="flex gap-2 mt-2">
+                                        <button onclick="alert('Mendail John...')" class="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition flex items-center gap-1">
+                                            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                                        </button>
+                                        <button onclick="alert('Mendail John...')" class="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition flex items-center gap-1">
+                                            <i class="fa-solid fa-phone"></i> Call
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Manager 2: ManRemy (Updated to ADMIN SQUAD) -->
+                            <div class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:shadow-md transition bg-gradient-to-br from-purple-50 to-white">
+                                <div class="w-12 h-12 rounded-full bg-purple-200 flex items-center justify-center text-purple-700 font-bold text-xl border-2 border-white shadow-sm">
+                                    M
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm text-gray-800">ManRemy</h4>
+                                    <!-- UPDATED: Gelaran ringkas -->
+                                    <span class="text-[10px] text-purple-600 font-medium uppercase tracking-wide bg-purple-100 px-1.5 py-0.5 rounded">ADMIN SQUAD</span>
+                                    <div class="flex gap-2 mt-2">
+                                        <button onclick="alert('Mendail ManRemy...')" class="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition flex items-center gap-1">
+                                            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                                        </button>
+                                        <button onclick="alert('Mendail ManRemy...')" class="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition flex items-center gap-1">
+                                            <i class="fa-solid fa-phone"></i> Call
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-center">
+                            <p class="text-[10px] text-gray-400 italic">
+                                *Nombor telefon mereka dah ada dalam group WhatsApp kan? Jangan buat-buat lupa!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div> <!-- END OF MOBILE WRAPPER -->
+
+    <!-- SCROLL TO TOP BUTTON -->
+    <button id="scrollToTopBtn" onclick="scrollToTop()" class="bg-blue-600 text-white p-3 rounded-full shadow-lg flex items-center justify-center backdrop-blur-sm border border-blue-400/30 hover:bg-blue-500 hover:-translate-y-1">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- MODAL: Edit Member Data -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform" id="modalContent">
+            <h3 class="font-bold text-lg mb-4 text-gray-800">Kemaskini Data Ahli</h3>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Ahli</label>
+            <input type="text" id="modalMemberNameInput" class="w-full p-3 border border-gray-300 rounded-lg mb-3 focus:ring-2 focus:ring-emerald-500 outline-none">
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jumlah Bayaran (RM)</label>
+            <input type="number" id="modalAmount" class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-emerald-500 outline-none">
+            <div class="flex justify-end gap-2">
+                <button onclick="closeModal()" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Batal</button>
+                <button onclick="saveMemberData()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Add/Edit Expense (UPDATED: Simplified) -->
+    <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform" id="expenseModalContent">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-gray-800" id="expenseModalTitle">Rekod Perbelanjaan</h3>
+                <button onclick="closeExpenseModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Kategori</label>
+            <select id="expCategory" class="w-full p-3 border border-gray-300 rounded-lg mb-3 focus:ring-2 focus:ring-orange-500 outline-none bg-white">
+                <option value="Pengangkutan">Pengangkutan</option>
+                <option value="Makan & Minum">Makan & Minum</option>
+                <option value="Sewa Boat">Sewa Boat</option>
+                <option value="Homestay">Homestay</option>
+                <option value="Lain-lain">Lain-lain</option>
+            </select>
+
+            <!-- REMOVED: Subtype container -->
+
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Perincian</label>
+            <input type="text" id="expDesc" placeholder="Contoh: Deposit Van" class="w-full p-3 border border-gray-300 rounded-lg mb-3 focus:ring-2 focus:ring-orange-500 outline-none">
+
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jumlah (RM)</label>
+            <input type="number" id="expAmount" class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-orange-500 outline-none">
+
+            <div class="flex justify-end gap-2">
+                <button onclick="closeExpenseModal()" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Batal</button>
+                <button onclick="saveExpense()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-medium">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Admin Login -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform" id="loginModalContent">
+            <h3 class="font-bold text-lg mb-4 text-gray-800">Admin Login</h3>
+            <p class="text-sm text-gray-500 mb-4">Sila masukkan butiran log masuk.</p>
+            <input type="text" id="adminUsernameInput" class="w-full p-3 border border-gray-300 rounded-lg mb-3 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Nama Pengguna">
+            <input type="password" id="adminPasswordInput" class="w-full p-3 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Kata Laluan">
+            <p id="loginError" class="text-red-500 text-xs font-bold hidden mb-4 mt-2">Nama pengguna atau kata laluan salah!</p>
+            <div class="flex justify-end gap-2 mt-4">
+                <button onclick="closeLoginModal()" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Batal</button>
+                <button onclick="attemptLogin()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium">Masuk</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Delete Confirmation -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform" id="deleteModalContent">
+            <div class="text-center mb-4">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                    <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900">Padam Rekod?</h3>
+                <p class="text-sm text-gray-500 mt-2">Adakah anda pasti mahu memadam rekod <span id="deleteItemName" class="font-bold text-gray-800"></span>? Tindakan ini tidak boleh dikembalikan.</p>
+            </div>
+            <div class="flex justify-center gap-3 mt-6">
+                <button onclick="closeDeleteModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition">Batal</button>
+                <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium shadow-md transition">Ya, Padam</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const TARGET_PER_PERSON = 500;
+        const DEADLINE = new Date('2026-05-01');
+        let isAdmin = false;
+        
+        // Image slider data (Sample images related to squid fishing)
+        const sliderImages = [
+            { url: "https://placehold.co/1920x250/0f172a/ffffff?text=Candat+Malam+1", alt: "Candat Malam" },
+            { url: "https://placehold.co/1920x250/10b981/ffffff?text=Lampu+Pukat+Memanggil+Sotong", alt: "Lampu Candat" },
+            { url: "https://placehold.co/1920x250/3b82f6/ffffff?text=Bot+Penuh+Semangat", alt: "Bot di Laut" },
+            { url: "https://placehold.co/1920x250/f97316/ffffff?text=Strike+Sotong+!" , alt: "Hasil Tangkapan" }
+        ];
+        let currentImageIndex = 0;
+
+
+        // --- MOCK DATA (UPDATED WITH NEW NAMES) ---
+        // Peringatan: Data ini adalah 'mock data' dan tidak disimpan secara kekal.
+        let members = [
+            { id: 1, name: 'Mie', paid: 500 },
+            { id: 2, name: 'John', paid: 150 },
+            { id: 3, name: 'ManRemy', paid: 0 },
+            { id: 4, name: 'Man', paid: 250 },
+            { id: 5, name: 'CheLan', paid: 450 },
+            { id: 6, name: 'AbgLan', paid: 50 },
+            { id: 7, name: 'AbgWan', paid: 500 },
+            { id: 8, name: 'Hariz', paid: 100 },
+            { id: 9, name: 'Rusdi', paid: 300 },
+            { id: 10, name: 'AbgRizal', paid: 0 }
+        ];
+
+        let expenses = [
+            { id: 101, date: '2025-01-15', category: 'Homestay', detail: 'Deposit Homestay Port Dickson', amount: 200 },
+            { id: 102, date: '2025-02-01', category: 'Pengangkutan', detail: 'Bayar Booking (Van Sewa)', amount: 150 }
+        ];
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCountdown();
+            renderTable();
+            renderExpenses();
+            calculateSavings(); 
+            startImageSlider();
+            
+            if(sessionStorage.getItem('isAdmin') === 'true') {
+                enableAdminMode();
+            }
+        });
+
+        // --- IMAGE SLIDER LOGIC ---
+        function updateSliderImage() {
+            const images = document.querySelectorAll('.slider-image');
+            
+            // Fade out current active image
+            images.forEach((img, index) => {
+                if (img.classList.contains('active')) {
+                    img.classList.remove('active');
+                }
+            });
+
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            
+            // Fade in the new active image
+            images[currentImageIndex].classList.add('active');
+        }
+
+        function startImageSlider() {
+            // Populate slider with data from JS array
+            const sliderContainer = document.querySelector('.image-slider');
+            if (sliderContainer) {
+                 sliderContainer.innerHTML = '';
+                 sliderImages.forEach((imgData, index) => {
+                    const img = document.createElement('img');
+                    img.className = 'slider-image';
+                    img.src = imgData.url;
+                    img.alt = imgData.alt;
+                    // Handle image load error gracefully
+                    img.onerror = function() {
+                        this.src = `https://placehold.co/1920x250/500/ffffff?text=Image+Failed+to+Load`;
+                        this.onerror = null;
+                    }; 
+                    if (index === 0) img.classList.add('active');
+                    sliderContainer.appendChild(img);
+                 });
+            }
+
+            // Start the auto change timer
+            setInterval(updateSliderImage, 3000); // Ganti setiap 3 saat
+        }
+
+
+        // --- UTILITY ---
+        function formatCurrency(num) {
+            // Updated to be compatible with iFrame environment and ensure proper formatting
+            try {
+                return new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR', maximumFractionDigits: 0 }).format(num);
+            } catch (e) {
+                return `RM ${Math.round(num)}`;
+            }
+        }
+
+        // --- MENU LOGIC ---
+        function toggleMenu() {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('menuOverlay');
+            
+            if (menu.classList.contains('-translate-x-full')) {
+                menu.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            } else {
+                menu.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = 'auto'; // Re-enable scrolling
+            }
+        }
+        
+        // Custom function to handle Home link (used by menu and squid icon)
+        function scrollToTopAndCloseMenu() {
+            scrollToTop();
+            // Wait for scroll to finish before closing menu for smoother UX
+            setTimeout(toggleMenu, 300);
+        }
+
+        // --- TIME LOGIC ---
+        function getRemainingTime() {
+            const now = new Date();
+            const current = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const target = new Date(DEADLINE.getFullYear(), DEADLINE.getMonth(), DEADLINE.getDate());
+            if (current >= target) return { expired: true, totalDays: 0, months: 0, days: 0 };
+            const timeDiff = target - current;
+            const totalDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            
+            // Calculate remaining months and days accurately
+            let targetMonth = target.getMonth();
+            let targetYear = target.getFullYear();
+            let currentMonth = current.getMonth();
+            let currentYear = current.getFullYear();
+
+            let months = (targetYear - currentYear) * 12 + (targetMonth - currentMonth);
+            let days = target.getDate() - current.getDate();
+
+            if (days < 0) {
+                months--;
+                // Get days in previous month (i.e., the month *before* the target month)
+                const lastMonthDays = new Date(targetYear, targetMonth, 0).getDate();
+                days += lastMonthDays;
+            }
+            
+            // Recalculate if days roll back a month
+            if (days >= new Date(targetYear, targetMonth, 0).getDate() && months >= 0) {
+                months++;
+                days = 0; // Or whatever day difference is necessary, but this simple logic is safer
+            }
+            
+            // Ensure non-negative and positive values
+            months = Math.max(0, months);
+            days = Math.max(0, days);
+            
+            // Fallback for edge cases, ensure total days is accurate
+            if (months * 30.44 + days > totalDays + 1) { // Basic sanity check
+                // Reset to simple conversion if date math is complex near year end
+                months = Math.floor(totalDays / 30.44);
+                days = Math.ceil(totalDays % 30.44);
+            }
+
+            return { expired: false, totalDays: totalDays, displayMonths: months, displayDays: days };
+        }
+
+        function updateCountdown() {
+            const timeData = getRemainingTime();
+            if (timeData.expired) {
+                 document.getElementById('countdownDisplay').innerHTML = `<span class="text-2xl">Tamat Tempoh</span>`;
+                 document.getElementById('totalDaysDebug').innerText = `(Misi Dah Berlepas!)`;
+                 return;
+            }
+            document.getElementById('countdownDisplay').innerText = `${timeData.displayMonths} Bulan ${timeData.displayDays} Hari`;
+            document.getElementById('totalDaysDebug').innerText = `(Jumlah: ${timeData.totalDays} hari lagi)`;
+        }
+
+        // --- SCROLL TO TOP LOGIC ---
+        const scrollBtn = document.getElementById('scrollToTopBtn');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollBtn.classList.add('show');
+            } else {
+                scrollBtn.classList.remove('show');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- MEMBERS TABLE & STATS ---
+        function renderTable() {
+            const tbody = document.getElementById('memberTableBody');
+            tbody.innerHTML = '';
+            // TUKAR TAJUK GAH DI SINI
+            document.getElementById('tableTitle').innerText = `Skuad Hanyir Sotong`;
+            
+            // Sorting by Progress (Highest Paid first)
+            members.sort((a, b) => {
+                const progressA = (a.paid / TARGET_PER_PERSON) * 100;
+                const progressB = (b.paid / TARGET_PER_PERSON) * 100;
+                return progressB - progressA; // Sort descending (Highest Progress at the top)
+            });
+
+            let totalCollected = 0;
+
+            members.forEach(member => {
+                totalCollected += member.paid;
+                const percentage = Math.min(100, (member.paid / TARGET_PER_PERSON) * 100);
+                const remaining = Math.max(0, TARGET_PER_PERSON - member.paid);
+                
+                const row = `
+                    <tr class="hover:bg-gray-50 transition border-b border-gray-50 last:border-0">
+                        <td class="p-4"><div class="font-bold text-gray-800">${member.name}</div></td>
+                        <td class="p-4 text-center">
+                            <div class="w-24 mx-auto bg-gray-200 rounded-full h-1.5 mt-1"><div class="bg-emerald-500 h-1.5 rounded-full" style="width: ${percentage}%"></div></div>
+                            <div class="text-xs text-gray-400 mt-1">${Math.round(percentage)}%</div>
+                        </td>
+                        <td class="p-4 text-right font-mono text-emerald-700 font-bold">${formatCurrency(member.paid)}</td>
+                        <td class="p-4 text-right font-mono text-red-400 text-sm">${remaining > 0 ? '-' + formatCurrency(remaining) : 'RM 0'}</td>
+                        <td class="p-4 text-center admin-col ${isAdmin ? '' : 'hidden'} whitespace-nowrap">
+                            <button onclick="openEditModal(${member.id})" class="text-blue-500 hover:text-blue-700 transition p-2 rounded hover:bg-blue-50 mr-1"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="openDeleteModal(${member.id}, 'member')" class="text-red-400 hover:text-red-600 transition p-2 rounded hover:bg-red-50"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            document.getElementById('totalCollectedDisplay').innerText = formatCurrency(totalCollected);
+            const totalTarget = members.length * TARGET_PER_PERSON;
+            const totalPercent = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
+            document.getElementById('progressBar').style.width = `${totalPercent}%`;
+            document.getElementById('percentDisplay').innerText = `${Math.round(totalPercent)}% Dicapai`;
+            
+            updateExpenseSummary(totalCollected);
+        }
+
+        // --- EXPENSES LOGIC (UPDATED) ---
+        function renderExpenses() {
+            const tbody = document.getElementById('expensesTableBody');
+            tbody.innerHTML = '';
+            
+            // Sort expenses by date descending
+            expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (expenses.length === 0) {
+                document.getElementById('noExpensesMsg').classList.remove('hidden');
+            } else {
+                document.getElementById('noExpensesMsg').classList.add('hidden');
+                expenses.forEach(exp => {
+                    const row = `
+                        <tr class="hover:bg-gray-50 transition border-b border-gray-50 last:border-0">
+                            <td class="p-4 text-sm text-gray-500">${exp.date}</td>
+                            <td class="p-4">
+                                <span class="font-bold text-gray-700 block">${exp.category}</span>
+                                <span class="text-xs text-gray-500 italic">(${exp.detail})</span>
+                            </td>
+                            <td class="p-4 text-right font-mono text-red-500 font-bold">-${formatCurrency(exp.amount)}</td>
+                            <td class="p-4 text-center admin-col ${isAdmin ? '' : 'hidden'} whitespace-nowrap">
+                                <button onclick="openEditExpenseModal(${exp.id})" class="text-blue-500 hover:text-blue-700 transition p-2 rounded hover:bg-blue-50 mr-1"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="openDeleteModal(${exp.id}, 'expense')" class="text-red-400 hover:text-red-600 transition p-2 rounded hover:bg-red-50"><i class="fa-solid fa-trash-can"></i></button>
+                            </td>
+                        </tr>`;
+                    tbody.innerHTML += row;
+                });
+            }
+            
+            let totalCollected = members.reduce((sum, m) => sum + m.paid, 0);
+            updateExpenseSummary(totalCollected);
+        }
+
+        function updateExpenseSummary(totalCollected) {
+            let totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+            let netBalance = totalCollected - totalExpenses;
+
+            document.getElementById('summaryCollected').innerText = formatCurrency(totalCollected);
+            document.getElementById('summaryExpenses').innerText = formatCurrency(totalExpenses);
+            document.getElementById('summaryNetBalance').innerText = formatCurrency(netBalance);
+            
+            const balEl = document.getElementById('summaryNetBalance');
+            if (netBalance < 0) balEl.className = "font-bold text-red-600";
+            else balEl.className = "font-bold text-blue-600";
+        }
+
+        let currentExpenseEditingId = null;
+
+        function openExpenseModal() {
+            // Reset for Add New
+            currentExpenseEditingId = null;
+            document.getElementById('expenseModalTitle').innerText = "Rekod Perbelanjaan Baru";
+            document.getElementById('expCategory').value = "Pengangkutan";
+            document.getElementById('expDesc').value = "";
+            document.getElementById('expAmount').value = "";
+            
+            const modal = document.getElementById('expenseModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('expenseModalContent').classList.remove('scale-95');
+                document.getElementById('expenseModalContent').classList.add('scale-100');
+            }, 10);
+        }
+
+        function openEditExpenseModal(id) {
+            const exp = expenses.find(e => e.id === id);
+            if (!exp) return;
+            
+            currentExpenseEditingId = id;
+            document.getElementById('expenseModalTitle').innerText = "Kemaskini Belanja";
+            document.getElementById('expCategory').value = exp.category;
+            document.getElementById('expDesc').value = exp.detail;
+            document.getElementById('expAmount').value = exp.amount;
+
+            const modal = document.getElementById('expenseModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('expenseModalContent').classList.remove('scale-95');
+                document.getElementById('expenseModalContent').classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeExpenseModal() {
+            const modal = document.getElementById('expenseModal');
+            document.getElementById('expenseModalContent').classList.remove('scale-100');
+            document.getElementById('expenseModalContent').classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 150);
+            currentExpenseEditingId = null;
+        }
+
+        function saveExpense() {
+            const cat = document.getElementById('expCategory').value;
+            const amount = parseFloat(document.getElementById('expAmount').value);
+            const desc = document.getElementById('expDesc').value;
+            let detail = desc.trim() ? desc : "-";
+
+            if (isNaN(amount) || amount <= 0) {
+                // Using custom modal style for error message instead of alert
+                showStatusModal("Ralat Input", "Sila masukkan jumlah perbelanjaan yang sah (lebih dari RM 0).", "error");
+                return;
+            }
+
+            if (currentExpenseEditingId !== null) {
+                // UPDATE EXISTING
+                const index = expenses.findIndex(e => e.id === currentExpenseEditingId);
+                if (index !== -1) {
+                    expenses[index].category = cat;
+                    expenses[index].detail = detail;
+                    expenses[index].amount = amount;
+                }
+            } else {
+                // CREATE NEW
+                const newExp = {
+                    id: Date.now(),
+                    date: new Date().toISOString().split('T')[0],
+                    category: cat,
+                    detail: detail,
+                    amount: amount
+                };
+                expenses.push(newExp);
+            }
+
+            renderExpenses();
+            closeExpenseModal();
+            showStatusModal("Berjaya!", "Rekod perbelanjaan telah disimpan.", "success");
+        }
+        
+        // --- CUSTOM ALERT/CONFIRM MODAL (Replacement for alert/confirm) ---
+        function showStatusModal(title, message, type = 'info') {
+            // Reusing delete modal structure for simplicity, just changing content
+            const modal = document.getElementById('deleteModal');
+            const content = document.getElementById('deleteModalContent');
+            const iconContainer = content.querySelector('.mx-auto');
+            const icon = iconContainer.querySelector('i');
+            const nameEl = document.getElementById('deleteItemName');
+            
+            // Reconfigure for Status/Alert
+            iconContainer.classList.remove('bg-red-100');
+            icon.classList.remove('fa-triangle-exclamation', 'text-red-600');
+            
+            if (type === 'success') {
+                 iconContainer.classList.add('bg-emerald-100');
+                 icon.classList.add('fa-check-circle', 'text-emerald-600');
+            } else if (type === 'error') {
+                 iconContainer.classList.add('bg-red-100');
+                 icon.classList.add('fa-triangle-exclamation', 'text-red-600');
+            } else { // info
+                 iconContainer.classList.add('bg-blue-100');
+                 icon.classList.add('fa-circle-info', 'text-blue-600');
+            }
+
+            content.querySelector('h3').innerText = title;
+            content.querySelector('p').innerText = message;
+            
+            // Hide delete buttons and show a single close button
+            content.querySelector('.flex.justify-center.gap-3').innerHTML = `
+                <button onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium transition">Tutup</button>
+            `;
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        // Override default browser functions (Critical Mandate)
+        window.alert = (message) => showStatusModal("Notifikasi", message, "info");
+
+
+        // --- CALCULATOR LOGIC (UPDATED WITH SUGGESTION) ---
+        function calculateSavings() {
+            const currentSavings = parseFloat(document.getElementById('calcCurrentSavings').value) || 0;
+            const needed = Math.max(0, TARGET_PER_PERSON - currentSavings);
+            
+            document.getElementById('calcNeeded').innerText = formatCurrency(needed);
+
+            const timeData = getRemainingTime();
+            
+            const suggestionBox = document.getElementById('calcSuggestion');
+            const suggestionText = document.getElementById('calcSuggestionText');
+
+            if (timeData.expired || needed <= 0) {
+                 document.getElementById('calcMonthly').innerText = "RM 0";
+                 document.getElementById('calcWeekly').innerText = "RM 0";
+                 
+                 suggestionBox.classList.add('hidden');
+                 if(needed <= 0) {
+                     suggestionBox.classList.remove('hidden');
+                     suggestionText.innerText = `Mantap! Target bayaran anda (RM ${TARGET_PER_PERSON}) sudah dicapai!`;
+                     suggestionBox.classList.remove('bg-indigo-50');
+                     suggestionBox.classList.add('bg-emerald-50');
+                 }
+                 return;
+            }
+
+            // Using total days for a more accurate calculation
+            const weeksLeft = Math.max(1, Math.ceil(timeData.totalDays / 7));
+            const weeklyPayment = needed / weeksLeft;
+            const monthsLeft = Math.max(1, timeData.displayMonths); // Use display months for cleaner rounding
+            const monthlyPayment = needed / (monthsLeft || 1);
+
+            document.getElementById('calcMonthly').innerText = formatCurrency(monthlyPayment);
+            document.getElementById('calcWeekly').innerText = formatCurrency(weeklyPayment);
+            
+            suggestionBox.classList.remove('hidden');
+            suggestionBox.classList.add('bg-indigo-50'); // Ensure background is correct for saving
+            suggestionText.innerText = `Tips: Simpan RM${Math.ceil(weeklyPayment)} seminggu dari sekarang untuk capai target dalam ${weeksLeft} minggu.`;
+        }
+
+        // --- ADMIN / MODALS LOGIC ---
+        
+        function toggleAdminMode() {
+            if (isAdmin) {
+                // Logout
+                isAdmin = false;
+                sessionStorage.removeItem('isAdmin');
+                document.getElementById('authBtn').innerHTML = '<i class="fa-solid fa-lock"></i> <span class="hidden md:inline">Admin Login</span>';
+                document.getElementById('authBtn').classList.remove('bg-red-600', 'border-red-500');
+                document.getElementById('authBtn').classList.add('bg-blue-800/50', 'border-blue-500/50');
+                document.getElementById('adminBadge').classList.add('hidden');
+                document.getElementById('addMemberBtn').classList.add('hidden');
+                document.getElementById('addExpenseBtn').classList.add('hidden');
+                
+                document.querySelectorAll('.admin-col').forEach(el => el.classList.add('hidden'));
+                
+                // Re-render to hide Admin columns immediately
+                renderTable();
+                renderExpenses();
+                showStatusModal("Log Keluar", "Anda telah log keluar dari Mod Admin.", "info");
+
+            } else {
+                openLoginModal();
+            }
+        }
+
+        function openLoginModal() {
+            const modal = document.getElementById('loginModal');
+            document.getElementById('adminUsernameInput').value = '';
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('loginError').classList.add('hidden');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('loginModalContent').classList.remove('scale-95');
+                document.getElementById('loginModalContent').classList.add('scale-100');
+                document.getElementById('adminUsernameInput').focus();
+            }, 10);
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            document.getElementById('loginModalContent').classList.remove('scale-100');
+            document.getElementById('loginModalContent').classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 150);
+        }
+
+        function attemptLogin() {
+            const user = document.getElementById('adminUsernameInput').value;
+            const pass = document.getElementById('adminPasswordInput').value;
+            
+            // Admin Credentials are hardcoded (as mock data)
+            if (user === 'fahmie' && pass === 'Ummc@1234567890') {
+                enableAdminMode();
+                closeLoginModal();
+                showStatusModal("Log Masuk Berjaya", "Mod Admin diaktifkan. Anda kini boleh mengedit rekod.", "success");
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function enableAdminMode() {
+            isAdmin = true;
+            sessionStorage.setItem('isAdmin', 'true');
+            document.getElementById('authBtn').innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Logout';
+            document.getElementById('authBtn').classList.remove('bg-blue-800/50', 'border-blue-500/50');
+            document.getElementById('authBtn').classList.add('bg-red-600', 'border-red-500');
+            document.getElementById('adminBadge').classList.remove('hidden');
+            document.getElementById('addMemberBtn').classList.remove('hidden');
+            document.getElementById('addExpenseBtn').classList.remove('hidden'); 
+            
+            document.querySelectorAll('.admin-col').forEach(el => el.classList.remove('hidden'));
+            
+            // Re-render to show Admin columns immediately
+            renderTable();
+            renderExpenses();
+        }
+
+        // --- EDIT / ADD / DELETE HELPERS ---
+        let currentEditingId = null;
+        let itemToDelete = { id: null, type: null }; 
+
+        function openEditModal(id) {
+            const member = members.find(m => m.id === id);
+            if (!member) return;
+            currentEditingId = id;
+            document.getElementById('modalMemberNameInput').value = member.name;
+            document.getElementById('modalAmount').value = member.paid;
+            const modal = document.getElementById('editModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                 document.getElementById('modalContent').classList.remove('scale-95');
+                 document.getElementById('modalContent').classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('editModal');
+            document.getElementById('modalContent').classList.remove('scale-100');
+            document.getElementById('modalContent').classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 150);
+            currentEditingId = null;
+        }
+
+        function saveMemberData() {
+            if (currentEditingId === null) return;
+            const newName = document.getElementById('modalMemberNameInput').value;
+            const newAmount = parseFloat(document.getElementById('modalAmount').value);
+            
+            if (!newName.trim()) { 
+                showStatusModal("Ralat Input", "Nama ahli tidak boleh kosong.", "error"); 
+                return; 
+            }
+            if (isNaN(newAmount) || newAmount < 0) { 
+                showStatusModal("Ralat Input", "Sila masukkan jumlah bayaran yang sah.", "error"); 
+                return; 
+            }
+            
+            const index = members.findIndex(m => m.id === currentEditingId);
+            if (index !== -1) {
+                members[index].name = newName;
+                members[index].paid = newAmount;
+                renderTable();
+                calculateSavings();
+                closeModal();
+                showStatusModal("Berjaya!", `Data ahli ${newName} telah dikemaskini.`, "success");
+            }
+        }
+
+        function addMember() {
+            const newId = Date.now(); 
+            const newMember = { id: newId, name: "Ahli Baru", paid: 0 };
+            members.push(newMember);
+            renderTable();
+            // Open modal to immediately edit the new member
+            openEditModal(newId); 
+        }
+
+        // UNIFIED DELETE MODAL
+        function openDeleteModal(id, type) {
+            itemToDelete = { id, type };
+            let name = "";
+            let title = "Padam Rekod?";
+            
+            if (type === 'member') {
+                const item = members.find(m => m.id === id);
+                if(item) name = item.name;
+                title = `Padam Ahli (${name})?`;
+            } else {
+                const item = expenses.find(e => e.id === id);
+                if(item) name = `${item.category} (RM${item.amount})`;
+                title = `Padam Belanja (${item.category})?`;
+            }
+            
+            const modal = document.getElementById('deleteModal');
+            const content = document.getElementById('deleteModalContent');
+            
+            // Reset for delete confirmation
+            content.querySelector('.mx-auto').className = 'mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4';
+            content.querySelector('.mx-auto i').className = 'fa-solid fa-triangle-exclamation text-red-600 text-xl';
+            content.querySelector('h3').innerText = title;
+            content.querySelector('p').innerHTML = `Adakah anda pasti mahu memadam rekod <span class="font-bold text-gray-800">${name}</span>? Tindakan ini tidak boleh dikembalikan.`;
+            
+            // Set delete buttons
+            content.querySelector('.flex.justify-center.gap-3').innerHTML = `
+                <button onclick="closeDeleteModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition">Batal</button>
+                <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium shadow-md transition">Ya, Padam</button>
+            `;
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('deleteModalContent').classList.remove('scale-95');
+                document.getElementById('deleteModalContent').classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            document.getElementById('deleteModalContent').classList.remove('scale-100');
+            document.getElementById('deleteModalContent').classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 150);
+            itemToDelete = { id: null, type: null };
+        }
+
+        function confirmDelete() {
+            let successMessage = "";
+            if (itemToDelete.type === 'member') {
+                members = members.filter(m => m.id !== itemToDelete.id);
+                renderTable();
+                calculateSavings();
+                successMessage = "Rekod ahli telah berjaya dipadam.";
+            } else if (itemToDelete.type === 'expense') {
+                expenses = expenses.filter(e => e.id !== itemToDelete.id);
+                renderExpenses();
+                successMessage = "Rekod perbelanjaan telah berjaya dipadam.";
+            }
+            closeDeleteModal();
+            showStatusModal("Berjaya Padam", successMessage, "success");
+        }
+
+    </script>
+</body>
+</html>
