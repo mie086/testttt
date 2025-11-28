@@ -412,8 +412,8 @@
                                      <i class="fa-solid fa-utensils text-sm"></i>
                                  </div>
                                  <div>
-                                     <span class="font-bold block text-gray-800">Sotong Celup Tepung</span>
-                                     Masak segar atas bot. Fuhh!
+                                     <span class="font-bold block text-gray-800">Tukang Masak Laut</span>
+                                     Masak maggi + sotong segar atas bot. Fuhh!
                                  </div>
                              </li>
                              <!-- NEW TARGET 1 -->
@@ -627,7 +627,7 @@
                                     <i class="fa-solid fa-qrcode text-teal-600"></i> Imbas & Bayar
                                 </h3>
                                 <p class="text-xs text-gray-500 mb-4">
-                                    Dah cukup duit? Terus transfer sini.
+                                    Dah cukup duit? Terus Imbas disini.
                                 </p>
                                 
                                 <!-- QR Placeholder -->
@@ -636,19 +636,23 @@
                                 </div>
 
                                 <div class="bg-gray-50 rounded-lg p-2 w-full max-w-[200px] mb-3 border border-gray-100">
-                                    <p class="text-[10px] text-gray-400 uppercase">Bank Transfer</p>
+                                    <p class="text-[10px] text-gray-400 uppercase">Scan QR</p>
                                     <p class="text-xs font-bold text-gray-800">Maybank (Hariz)</p>
                                 </div>
 
                                 <!-- Important Note (Compact) -->
                                 <div class="flex gap-2 items-start text-left bg-yellow-50 p-2 rounded-lg border border-yellow-100 w-full">
                                     <i class="fa-solid fa-circle-exclamation text-yellow-500 text-xs mt-0.5"></i>
-                                    <div>
+                                
+                                    <!-- Flex untuk ayat + butang -->
+                                    <div class="flex items-center gap-2">
                                         <p class="text-[10px] text-yellow-800 leading-tight">
-                                            Lepas bayar, <strong>WAJIB</strong> hantar resit ke Hariz!
+                                            Sila <strong>MAKLUMKAN</strong> kepada Hariz setelah membuat pembayaran! dan sila <strong>TUNGGU!</strong> 4-5 minit untuk Admin Squad mengemaskini pada jadual pembayaran. 
                                         </p>
-                                        <button onclick="alert('Mendail Hariz...')" class="mt-1 bg-green-500 text-white text-[9px] px-2 py-0.5 rounded-full hover:bg-green-600 transition shadow-sm">
-                                            <i class="fa-brands fa-whatsapp"></i> Wasap Hariz
+                                        
+                                        <button ="alert('Mendail Hariz...')"
+                                            class="bg-green-500 text-white text-[9px] px-2 py-0.5 rounded-full hover:bg-green-600 transition shadow-sm">
+                                           <i class="fa-brands fa-whatsapp"></i> Whatsapp Hariz
                                         </button>
                                     </div>
                                 </div>
@@ -671,7 +675,7 @@
                         <!-- Title and Subtitle -->
                         <div class="flex justify-between items-center relative z-10">
                             <div class="flex flex-col">
-                                <h2 class="font-extrabold text-xl leading-snug" id="tableTitle">Skuad Pemburu Sotong</h2>
+                                <h2 class="font-extrabold text-xl leading-snug" id="tableTitle">Tabung Pemburu Sotong</h2>
                                 <p class="text-xs font-medium text-blue-200 uppercase tracking-widest">(Senarai Semak Pembayaran)</p>
                             </div>
                              <!-- Admin Controls Integrated -->
@@ -853,7 +857,7 @@
                         
                         <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-center">
                             <p class="text-[10px] text-gray-400 italic">
-                                *Nombor telefon mereka dah ada dalam group WhatsApp kan? Jangan buat-buat lupa!
+                                *Adapun nombor talian mereka itu telah pun termaktub dalam kumpulan WhatsApp kita!
                             </p>
                         </div>
                     </div>
@@ -1149,7 +1153,7 @@
             const tbody = document.getElementById('memberTableBody');
             tbody.innerHTML = '';
             // TUKAR TAJUK GAH DI SINI
-            document.getElementById('tableTitle').innerText = `Skuad Pemburu Sotong`;
+            document.getElementById('tableTitle').innerText = `Tabung Pemburu Sotong`;
             
             // Sorting by Progress (Highest Paid first)
             members.sort((a, b) => {
