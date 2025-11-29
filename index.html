@@ -650,7 +650,7 @@
                                             Sila <strong>MAKLUMKAN!</strong> kepada Hariz setelah membuat pembayaran! dan sila <strong>TUNGGU!</strong> 4-5 minit untuk Admin Squad mengemaskini pada jadual pembayaran. 
                                         </p>
                                         
-                                        <button ="alert('Mendail Hariz...')"
+                                        <button onclick="alert('Mendail Hariz...')"
                                             class="bg-green-500 text-white text-[9px] px-2 py-0.5 rounded-full hover:bg-green-600 transition shadow-sm">
                                            <i class="fa-brands fa-whatsapp"></i> Whatsapp Hariz
                                         </button>
@@ -690,6 +690,44 @@
                         </div>
                     </div>
                     <!-- END NEW THEMED HEADER -->
+
+                    <!-- SUMMARY CARD — WHITE THEME -->
+                    <div class="bg-white p-4 pb-6 -mt-1">
+                        <div class="bg-white rounded-xl p-4 border border-gray-100">
+                    
+                            <!-- Top Section: Amount & Target -->
+                            <div class="flex justify-between items-end mb-2">
+                                <div>
+                                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">
+                                        Jumlah Terkumpul
+                                    </p>
+                                    <h3 class="text-3xl font-bold text-emerald-600 leading-tight" id="tableSummaryCollected">
+                                        RM 0
+                                    </h3>
+                                </div>
+                    
+                                <div class="text-right">
+                                    <p class="text-[10px] text-gray-400">Sasaran</p>
+                                    <p class="text-sm font-bold text-gray-700" id="tableSummaryTarget">
+                                        RM 5,000
+                                    </p>
+                                </div>
+                            </div>
+                    
+                            <!-- Pill Progress Bar -->
+                            <div class="w-full bg-gray-100 rounded-full h-2 mb-2">
+                                <div id="tableSummaryProgress" class="bg-emerald-500 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                    
+                            <!-- Percent Display -->
+                            <p class="text-[11px] text-gray-500 mt-2" id="tableSummaryPercent">
+                                0% Dicapai
+                            </p>
+                    
+                        </div>
+                    </div>
+
+                    <!-- END NEW SUMMARY CARD -->
                     
                     <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
                         <table class="w-full text-left border-collapse">
@@ -829,10 +867,10 @@
                                     <!-- UPDATED: Gelaran ringkas -->
                                     <span class="text-[10px] text-blue-600 font-medium uppercase tracking-wide bg-blue-100 px-1.5 py-0.5 rounded">ADMIN SQUAD</span>
                                     <div class="flex flex-col gap-2 mt-2">
-                                        <button ="alert('Mendail John...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
+                                        <button onclick="alert('Mendail John...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                                         </button>
-                                        <button ="alert('Mendail John...')" class="w-full text-xs bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center gap-2">
+                                        <button onclick="alert('Mendail John...')" class="w-full text-xs bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-solid fa-phone"></i> Call
                                         </button>
                                     </div>
@@ -849,10 +887,10 @@
                                     <!-- UPDATED: Gelaran ringkas -->
                                     <span class="text-[10px] text-purple-600 font-medium uppercase tracking-wide bg-purple-100 px-1.5 py-0.5 rounded">ADMIN SQUAD</span>
                                     <div class="flex flex-col gap-2 mt-2">
-                                        <button ="alert('Mendail ManRemy...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
+                                        <button onclick="alert('Mendail ManRemy...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                                         </button>
-                                        <button ="alert('Mendail ManRemy...')" class="w-full text-xs bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center gap-2">
+                                        <button onclick="alert('Mendail ManRemy...')" class="w-full text-xs bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-solid fa-phone"></i> Call
                                         </button>
                                     </div>
@@ -1035,7 +1073,7 @@
             { id: 7, name: 'AbgWan', paid: 500, history: [{date: '2024-11-20', amount: 500}] },
             { id: 8, name: 'Hariz', paid: 100, history: [{date: '2025-02-10', amount: 100}] },
             { id: 9, name: 'Rusdi', paid: 400, history: [{date: '2025-01-15', amount: 200}, {date: '2025-02-20', amount: 200}] },
-            { id: 10, name: 'AbgRizal', paid: 70, history: [{date: '2025-01-15', amount: 50}, {date: '2025-02-20', amount: 20}] }
+            { id: 10, name: 'AbgRizal', paid: 90, history: [{date: '2025-01-15', amount: 50}, {date: '2025-02-20', amount: 40}] }
         ];
 
         let expenses = [
@@ -1250,6 +1288,15 @@
             const totalPercent = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
             document.getElementById('progressBar').style.width = `${totalPercent}%`;
             document.getElementById('percentDisplay').innerText = `${Math.round(totalPercent)}% Dicapai`;
+
+            // --- UPDATE TABLE SUMMARY CARD (NEW) ---
+            const summaryCollectedEl = document.getElementById('tableSummaryCollected');
+            const summaryProgressEl = document.getElementById('tableSummaryProgress');
+            const summaryPercentEl = document.getElementById('tableSummaryPercent');
+
+            if (summaryCollectedEl) summaryCollectedEl.innerText = formatCurrency(totalCollected);
+            if (summaryProgressEl) summaryProgressEl.style.width = `${totalPercent}%`;
+            if (summaryPercentEl) summaryPercentEl.innerText = `${Math.round(totalPercent)}% Dicapai`;
             
             updateExpenseSummary(totalCollected);
         }
