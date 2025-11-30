@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -468,38 +469,197 @@
             <div class="space-y-6">
                 
                 <!-- 1. Checklist Barang -->
-                <div id="checklistSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit border border-gray-100 scroll-mt-28">
-                    <div class="bg-slate-800 p-4 text-white flex justify-between items-center">
-                        <h3 class="font-bold text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-clipboard-check text-emerald-400"></i> Checklist Angler
-                        </h3>
-                        <span class="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Wajib Bawa!</span>
+                <!-- Checklist Angler (COMPONENT) -->
+                <div id="checklistSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+                  <div class="bg-slate-800 p-4 text-white flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <i class="fa-solid fa-clipboard-check text-emerald-400"></i>
+                      <h3 class="font-bold text-sm">Checklist Angler</h3>
                     </div>
-                    <div class="p-4 bg-white">
-                        <div class="space-y-2">
-                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
-                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
-                                <span class="sm text-gray-700 group-hover:text-emerald-700">Joran & Mesin (Check drag!)</span>
-                            </label>
-                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
-                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
-                                <span class="text-sm text-gray-700 group-hover:text-emerald-700">Candat (Spare banyak sikit)</span>
-                            </label>
-                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
-                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
-                                <span class="text-sm text-gray-700 group-hover:text-emerald-700">Baju Hujan (Laut tak menentu)</span>
-                            </label>
-                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
-                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
-                                <span class="text-sm text-gray-700 group-hover:text-emerald-700">Headlamp (Suluh sotong)</span>
-                            </label>
-                            <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
-                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 accent-emerald-600">
-                                <span class="sm text-gray-700 group-hover:text-emerald-700">Ubat Mabuk / Minyak Angin</span>
-                            </label>
+                
+                    <!-- Reset kecil: Reset ke Default -->
+                    <div class="flex items-center gap-2">
+                      <button id="resetChecklistBtn" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200" title="Reset checklist ke tetapan asal">
+                        Set Semula
+                      </button>
+                    </div>
+                  </div>
+                
+                  <div class="p-4 bg-white">
+                    <!-- MEMANCING -->
+                    <section class="mb-3">
+                      <header class="cat-header flex items-center justify-between cursor-pointer" role="button" tabindex="0" aria-label="Toggle Memancing" data-target="memancing">
+                        <div class="flex items-center gap-2">
+                          <i class="fa-solid fa-fish text-emerald-500"></i>
+                          <h4 class="font-semibold text-sm">Memancing</h4>
                         </div>
-                    </div>
+                        <div class="flex items-center gap-2">
+                          <svg class="cat-arrow w-4 h-4 transform transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </div>
+                      </header>
+                
+                      <div class="category-body mt-2 space-y-2 overflow-hidden" data-collapsed="true" style="max-height:0" aria-hidden="true">
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-joran" data-key="joran" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Joran & Mesin <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-candat" data-key="candat" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Candat (spare banyak) <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-towel" data-key="towel" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Towel kecil / kain lap <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-sarung" data-key="sarung" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Sarung tangan nipis <span class="ml-2 text-xs font-medium text-emerald-700 rounded px-1 bg-emerald-50">(pilihan)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-tali" data-key="tali" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Tali braided spare <span class="ml-2 text-xs font-medium text-emerald-700 rounded px-1 bg-emerald-50">(pilihan)</span></span>
+                        </label>
+                      </div>
+                    </section>
+                
+                    <!-- MEMASAK -->
+                    <section class="mb-3">
+                      <header class="cat-header flex items-center justify-between cursor-pointer" role="button" tabindex="0" aria-label="Toggle Memasak" data-target="memasak">
+                        <div class="flex items-center gap-2">
+                          <i class="fa-solid fa-utensils text-amber-500"></i>
+                          <h4 class="font-semibold text-sm">Memasak (Maggi & Sotong)</h4>
+                        </div>
+                        <svg class="cat-arrow w-4 h-4 transform transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </header>
+                
+                      <div class="category-body mt-2 space-y-2 overflow-hidden" data-collapsed="true" style="max-height:0" aria-hidden="true">
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-sotong" data-key="sotong" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Sotong segar (untuk masak) <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-periuk" data-key="periuk" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Cawan / Mangkuk (pakai buang) <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-air" data-key="air" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Air mineral untuk memasak <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-maggi" data-key="maggi" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Maggi / mi segera <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-stove" data-key="stove" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Stove portable + gas <span class="ml-2 text-xs font-medium text-emerald-700 rounded px-1 bg-emerald-50">(pilihan)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-periuk" data-key="periuk" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Periuk kecil / pot <span class="ml-2 text-xs font-medium text-emerald-700 rounded px-1 bg-emerald-50">(pilihan)</span></span>
+                        </label>
+                      </div>
+                    </section>
+                
+                    <!-- KESELAMATAN -->
+                    <section class="mb-3">
+                      <header class="cat-header flex items-center justify-between cursor-pointer" role="button" tabindex="0" aria-label="Toggle Keselamatan" data-target="keselamatan">
+                        <div class="flex items-center gap-2">
+                          <i class="fa-solid fa-shield text-blue-500"></i>
+                          <h4 class="font-semibold text-sm">Keselamatan</h4>
+                        </div>
+                        <svg class="cat-arrow w-4 h-4 transform transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </header>
+                
+                      <div class="category-body mt-2 space-y-2 overflow-hidden" data-collapsed="true" style="max-height:0" aria-hidden="true">
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-lifejacket" data-key="lifejacket" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Jaket keselamatan / life jacket <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-baju" data-key="baju" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Baju hujan / windbreaker <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-drybag" data-key="drybag" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Dry bag (lindung barang elektronik) <span class="ml-2 text-xs font-medium text-emerald-700 rounded px-1 bg-emerald-50">(pilihan)</span></span>
+                        </label>
+                      </div>
+                    </section>
+                
+                    <!-- PERUBATAN -->
+                    <section class="mb-3">
+                      <header class="cat-header flex items-center justify-between cursor-pointer" role="button" tabindex="0" aria-label="Toggle Perubatan" data-target="perubatan">
+                        <div class="flex items-center gap-2">
+                          <i class="fa-solid fa-kit-medical text-red-500"></i>
+                          <h4 class="font-semibold text-sm">Perubatan</h4>
+                        </div>
+                        <svg class="cat-arrow w-4 h-4 transform transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </header>
+                
+                      <div class="category-body mt-2 space-y-2 overflow-hidden" data-collapsed="true" style="max-height:0" aria-hidden="true">
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-ubatmabuk" data-key="ubatmabuk" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Ubat mabuk laut <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-firstaid" data-key="firstaid" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Plaster / kit pertolongan cemas <span class="ml-2 text-xs font-medium text-emerald-700 rounded px-1 bg-emerald-50">(pilihan)</span></span>
+                        </label>
+                      </div>
+                    </section>
+                
+                    <!-- LAIN-LAIN -->
+                    <section>
+                      <header class="cat-header flex items-center justify-between cursor-pointer" role="button" tabindex="0" aria-label="Toggle Lain-lain" data-target="lainlain">
+                        <div class="flex items-center gap-2">
+                          <i class="fa-solid fa-briefcase text-gray-600"></i>
+                          <h4 class="font-semibold text-sm">Lain-lain</h4>
+                        </div>
+                        <svg class="cat-arrow w-4 h-4 transform transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </header>
+                
+                      <div class="category-body mt-2 space-y-2 overflow-hidden" data-collapsed="true" style="max-height:0" aria-hidden="true">
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-cooler" data-key="cooler" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Cooler box / kotak ais <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-airminum" data-key="airminum" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Air minuman & snek <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></span>
+                        </label>
+                
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition group">
+                          <input id="item-power" data-key="power" type="checkbox" class="check-item w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                          <span class="text-sm text-gray-700">Powerbank <span class="ml-2 text-xs font-medium text-emerald-700 rounded px-1 bg-emerald-50">(pilihan)</span></span>
+                        </label>
+                      </div>
+                    </section>
+                  </div>
                 </div>
+                <!-- End Checklist Angler -->
 
                 <!-- 2. Tentatif Program -->
                 <div id="tentativeSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit border border-gray-100 scroll-mt-28">
@@ -588,7 +748,7 @@
                                         <i class="fa-solid fa-calculator text-indigo-500"></i> Kalkulator Simpanan
                                     </h3>
                                     <p class="text-xs text-gray-500 mb-3 leading-relaxed">
-                                        Masukkan jumlah yang dah kumpul dan yang dah bayar, sistem akan kira baki diperlukan.
+                                        Masukkan duit dalam tangan dan duit telah dibayar, sistem akan mengira baki secara automatik baki yang perlu dibayar.
                                     </p>
                                     
                                     <!-- INPUT 1: Duit Dalam Tangan -->
@@ -640,14 +800,29 @@
                                     Dah cukup duit? Terus Imbas disini.
                                 </p>
                                 
-                                <!-- QR Placeholder -->
-                                <div class="bg-white p-2 rounded-xl border-2 border-dashed border-teal-300 mb-3 w-32 h-32 flex items-center justify-center relative overflow-hidden group shadow-sm">
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DuitNow-Transfer-To-Hariz-Tabung-Sotong" alt="QR Bayaran" class="w-full h-full opacity-90 group-hover:scale-110 transition-transform duration-500">
+                            <!-- Maintenance Placeholder -->
+                            <div class="bg-white p-2 rounded-xl border-2 border-dashed border-teal-300 mb-3 w-32 h-32 
+                                        flex items-center justify-center relative overflow-hidden shadow-sm">
+                            
+                                <div class="text-center px-1 leading-tight">
+                                    
+                                    <!-- Warning Icon -->
+                                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg mb-1"></i>
+                            
+                                    <!-- Message -->
+                                    <p class="text-[10px] text-gray-700 font-medium">
+                                        <span class="font-bold text-amber-600">Under Maintenance</span><br>
+                                        Sila rujuk pada grup WhatsApp<br>
+                                        atau hubungi <span class="font-bold">Hariz</span><br>
+                                        bagi proses pembayaran.
+                                    </p>
                                 </div>
+                            
+                            </div>
 
                                 <div class="bg-gray-50 rounded-lg p-2 w-full max-w-[200px] mb-3 border border-gray-100">
                                     <p class="text-[10px] text-gray-400 uppercase">Scan QR</p>
-                                    <p class="text-xs font-bold text-gray-800">Maybank (Hariz)</p>
+                                    <p class="text-xs font-bold text-gray-800">Cimb (Hariz)</p>
                                 </div>
 
                                 <!-- Important Note (Compact) -->
@@ -657,13 +832,9 @@
                                     <!-- Flex untuk ayat + butang -->
                                     <div class="flex items-center gap-2">
                                         <p class="text-[10px] text-yellow-800 leading-tight">
-                                            Sila <strong>MAKLUMKAN!</strong> kepada Hariz setelah membuat pembayaran! dan sila <strong>TUNGGU!</strong> 4-5 minit untuk Admin Squad mengemaskini pada jadual pembayaran. 
+                                            <strong>Terima kasih</strong> atas pembayaran anda. Proses pengemaskinian mengambil masa 4–5 minit sebelum status anda dipaparkan pada jadual dan sejarah pembayaran. 
                                         </p>
                                         
-                                        <button onclick="alert('Mendail Hariz...')"
-                                            class="bg-green-500 text-white text-[9px] px-2 py-0.5 rounded-full hover:bg-green-600 transition shadow-sm">
-                                           <i class="fa-brands fa-whatsapp"></i> Whatsapp Hariz
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -857,7 +1028,7 @@
                             <i class="fa-solid fa-circle-question text-yellow-500"></i> Pusat Bantuan
                         </h2>
                         <p class="text-xs text-gray-600 mt-1">
-                            "Sesat jalan boleh tanya Waze, sesat dalam program tanya Admin Squad!"
+                            "Jika ada sebarang kekeliruan dalam program, sila hubungi atau berjumpa Admin Squad untuk bantuan segera."
                         </p>
                     </div>
                     
@@ -877,10 +1048,10 @@
                                     <!-- UPDATED: Gelaran ringkas -->
                                     <span class="text-[10px] text-blue-600 font-medium uppercase tracking-wide bg-blue-100 px-1.5 py-0.5 rounded">ADMIN SQUAD</span>
                                     <div class="flex flex-col gap-2 mt-2">
-                                        <button onclick="alert('Mendail John...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
+                                        <button ="alert('Mendail John...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                                         </button>
-                                        <button onclick="alert('Mendail John...')" class="w-full text-xs bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center gap-2">
+                                        <button ="alert('Mendail John...')" class="w-full text-xs bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-solid fa-phone"></i> Call
                                         </button>
                                     </div>
@@ -897,10 +1068,10 @@
                                     <!-- UPDATED: Gelaran ringkas -->
                                     <span class="text-[10px] text-purple-600 font-medium uppercase tracking-wide bg-purple-100 px-1.5 py-0.5 rounded">ADMIN SQUAD</span>
                                     <div class="flex flex-col gap-2 mt-2">
-                                        <button onclick="alert('Mendail ManRemy...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
+                                        <button ="alert('Mendail ManRemy...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                                         </button>
-                                        <button onclick="alert('Mendail ManRemy...')" class="w-full text-xs bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center gap-2">
+                                        <button ="alert('Mendail ManRemy...')" class="w-full text-xs bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-solid fa-phone"></i> Call
                                         </button>
                                     </div>
@@ -1055,6 +1226,7 @@
     </div>
 
     <script>
+        
         // --- CONFIGURATION ---
         const TARGET_PER_PERSON = 500;
         const DEADLINE = new Date('2026-05-01');
@@ -1367,6 +1539,206 @@
             setTimeout(() => { modal.classList.add('hidden'); }, 150);
         }
 
+
+        // --- Checklist Angler — Enhanced Version ---
+        (function () {
+          const STORAGE_KEY = 'angler_checklist_v1';
+        
+          // helpers
+          function getCheckItems() { return Array.from(document.querySelectorAll('.check-item')); }
+          function getCategoryBodies() { return Array.from(document.querySelectorAll('.category-body')); }
+          const checklistRoot = document.getElementById('checklistSection');
+          const headers = Array.from(document.querySelectorAll('.cat-header'));
+          const resetBtn = document.getElementById('resetChecklistBtn');
+        
+          if (!checklistRoot || getCheckItems().length === 0) return;
+        
+          // Load saved state (defensive)
+          function loadSaved() {
+            try {
+              return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            } catch (e) {
+              console.warn('angler checklist: corrupted saved state. Clearing.', e);
+              localStorage.removeItem(STORAGE_KEY);
+              return {};
+            }
+          }
+          let saved = loadSaved();
+        
+          // NEW: Apply saved or default (DEFAULT = all UNCHECKED)
+          function applySavedOrDefault() {
+            getCheckItems().forEach(cb => {
+              const k = cb.dataset.key;
+              if (k && Object.prototype.hasOwnProperty.call(saved, k)) {
+                // use user's saved preference
+                cb.checked = !!saved[k];
+              } else {
+                // NO saved value -> default to unchecked (false)
+                cb.checked = false;
+              }
+            });
+          }
+          applySavedOrDefault();
+        
+          // Save state
+          function saveState() {
+            const state = {};
+            getCheckItems().forEach(cb => {
+              const k = cb.dataset.key;
+              if (k) state[k] = !!cb.checked;
+            });
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+              saved = state;
+            } catch (e) {
+              console.warn('angler checklist: cannot save to localStorage', e);
+            }
+          }
+        
+          // Wire change handlers
+          function wireCheckboxes() {
+            getCheckItems().forEach(cb => {
+              cb.removeEventListener('change', saveState);
+              cb.addEventListener('change', saveState);
+            });
+          }
+          wireCheckboxes();
+        
+          // Toggle animation: slide open/close by manipulating max-height
+          function openBody(body) {
+            body.setAttribute('data-collapsed', 'false');
+            body.setAttribute('aria-hidden', 'false');
+            const startHeight = body.clientHeight;
+            const target = body.scrollHeight;
+            body.style.transition = 'max-height 260ms ease';
+            body.style.maxHeight = startHeight + 'px';
+            requestAnimationFrame(() => {
+              body.style.maxHeight = target + 'px';
+            });
+          }
+        
+          function closeBody(body) {
+            body.setAttribute('data-collapsed', 'true');
+            body.setAttribute('aria-hidden', 'true');
+            const start = body.clientHeight;
+            body.style.transition = 'max-height 220ms ease';
+            body.style.maxHeight = start + 'px';
+            requestAnimationFrame(() => {
+              body.style.maxHeight = '0px';
+            });
+          }
+        
+          // When transition ends, if opened set max-height to none to allow fluid content changes
+          function onBodyTransitionEnd(e) {
+            const body = e.currentTarget;
+            const collapsed = body.getAttribute('data-collapsed') === 'true';
+            if (!collapsed) {
+              body.style.maxHeight = 'none';
+            } else {
+              body.style.maxHeight = '0px';
+            }
+            body.style.transition = '';
+          }
+        
+          // Attach transitionend to all category bodies
+          getCategoryBodies().forEach(b => {
+            b.addEventListener('transitionend', onBodyTransitionEnd);
+          });
+        
+          // Toggle handler for a header: either open or close its body
+          function toggleHeader(header) {
+            const body = header.nextElementSibling;
+            const arrow = header.querySelector('.cat-arrow');
+            if (!body) return;
+            const collapsed = body.getAttribute('data-collapsed') === 'true';
+        
+            if (collapsed) {
+              if (arrow) arrow.classList.add('rotate-180');
+              // ensure computed height available
+              if (body.style.maxHeight === 'none' || body.style.maxHeight === '') {
+                body.style.maxHeight = body.scrollHeight + 'px';
+              }
+              openBody(body);
+              header.setAttribute('aria-expanded', 'true');
+            } else {
+              if (arrow) arrow.classList.remove('rotate-180');
+              closeBody(body);
+              header.setAttribute('aria-expanded', 'false');
+            }
+          }
+        
+          // Wire header click & keyboard
+          headers.forEach(h => {
+            h.setAttribute('aria-expanded', 'false');
+            h.addEventListener('click', () => toggleHeader(h));
+            h.addEventListener('keydown', (ev) => {
+              if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggleHeader(h); }
+            });
+          });
+        
+          // Reset button (mock): confirm -> set all to UNCHECKED -> close categories (NO localStorage)
+          if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+              const ok = confirm('Set semula senarai semak ke tetapan asal? Semua tanda tersimpan akan dikosongkan!');
+              if (!ok) return;
+          
+              // set all to unchecked (mock only)
+              getCheckItems().forEach(cb => { cb.checked = false; });
+          
+              // close all open category bodies
+              getCategoryBodies().forEach(b => {
+                b.style.transition = '';
+                b.style.maxHeight = '0px';
+                b.setAttribute('data-collapsed', 'true');
+                b.setAttribute('aria-hidden', 'true');
+          
+                const header = b.previousElementSibling;
+                const arrow = header && header.querySelector('.cat-arrow');
+                if (arrow) arrow.classList.remove('rotate-180');
+                if (header) header.setAttribute('aria-expanded', 'false');
+              });
+          
+              // re-wire listeners (safe no-op if already wired)
+              wireCheckboxes();
+          
+              // return focus to reset for accessibility
+              resetBtn.focus();
+            });
+          }
+        
+          // Observe dynamic additions
+          if (window.MutationObserver) {
+            const mo = new MutationObserver((mutations) => {
+              let added = false;
+              for (const m of mutations) {
+                for (const n of m.addedNodes) {
+                  if (n.nodeType === 1) {
+                    if (n.matches && n.matches('.check-item')) added = true;
+                    if (n.querySelector && n.querySelector('.check-item')) added = true;
+                    if (n.matches && n.matches('.category-body')) {
+                      n.setAttribute('data-collapsed', 'true');
+                      n.setAttribute('aria-hidden', 'true');
+                      n.style.maxHeight = '0px';
+                      n.addEventListener('transitionend', onBodyTransitionEnd);
+                    }
+                  }
+                }
+              }
+              if (added) {
+                applySavedOrDefault(); // ensure new items also follow saved/default logic
+                wireCheckboxes();
+              }
+            });
+            mo.observe(checklistRoot, { childList: true, subtree: true });
+          }
+        
+          // ensure save is called if user toggled before script finishes wiring
+          // (already wired via wireCheckboxes)
+        
+          // Expose small helper (optional)
+          window.checklistSaveState = saveState;
+        
+        })();
 
         // --- EXPENSES LOGIC (UPDATED) ---
         function renderExpenses() {
