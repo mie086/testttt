@@ -26,30 +26,23 @@
             padding: 0;
         } 
         
-        /* Mobile-Friendly Wrapper */
-        #mobile-wrapper {
-            width: 100%;                 /* Ambil 100% skrin telefon */
-            max-width: 100%;             /* Elak overflow */
-            margin: 0 auto;
-            min-height: 100vh;           /* Tinggi penuh skrin */
-            background-color: #1e293b;   /* Background gelap */
-            overflow-x: hidden;          /* Elakkan scroll horizontal */
-            padding: 12px;               /* Ruang selamat kiri/kanan */
-            box-sizing: border-box;      /* Elak size pecah */
+        /* Desktop Wrapper – Ruang kerja luas dan responsif */
+        #desktop-wrapper {
+            width: 100%;                 /* Guna penuh skrin */
+            max-width: 1600px;           /* Had selesa untuk desktop */
+            margin: 0 auto;              /* Center on screen */
+            min-height: 100vh;           /* Full screen height */
+            background-color: #1e293b;   /* Warna background sama */
+            box-shadow: 0 0 40px rgba(0,0,0,0.4);
+            position: relative;
+            padding: 20px;               /* Ruang sisi selesa */
         }
         
-        /* Untuk skrin tablet kecil */
-        @media (min-width: 600px) {
-            #mobile-wrapper {
-                max-width: 600px;        /* Had selesa tablet portrait */
-                margin: 0 auto;
-            }
-        }
-        
-        /* Untuk tablet besar / iPad landscape */
-        @media (min-width: 900px) {
-            #mobile-wrapper {
-                max-width: 800px;        /* Had selesa */
+        /* Untuk skrin besar 2K atau ultrawide */
+        @media (min-width: 1800px) {
+            #desktop-wrapper {
+                max-width: 1750px;
+                padding: 40px;
             }
         }
 
