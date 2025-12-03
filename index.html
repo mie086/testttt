@@ -25,41 +25,32 @@
             padding: 0;
         } 
         
-        /* Phone Frame (Fixed Layout) */
+        /* Phone Frame + Auto Scale */
         #mobile-wrapper {
-            width: 480px;               /* FIXED width – kekal */
-            max-width: 100%;            /* Allow responsive overflow control */
+            width: 480px;               /* FIXED width – paling penting */
+            max-width: 480px;
             margin: 0 auto;
             min-height: 100vh;
             background-color: #1e293b;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            border-radius: 16px;
-            overflow: hidden;
+            transform-origin: top center;
         }
         
-        /* REMOVE AUTO SCALE sepenuhnya */
-        /*
+        /* AUTO SCALE untuk semua skrin kecil */
         @media (max-width: 480px) {
             #mobile-wrapper {
-                transform: scale(calc(100vw / 480));
+                transform: scale(calc(100vw / 480)); /* skala layout */
             }
         }
-        */
-        
-        /* Glass panel */
         .glass-panel {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
-        /* Ocean gradient background */
         .bg-ocean {
             background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
             color: white;
         }
-        
-        /* Input kecil */
         .edit-input {
             width: 80px;
             padding: 4px;
@@ -100,25 +91,25 @@
         }
         /* Image Slider Styles */
         .image-slider {
-            width: 100%;
-            height: 250px; /* Saiz standard slider */
-            overflow: hidden;
-            position: relative;
-            border-radius: 1rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
+          width: 100%;
+          aspect-ratio: 1 / 1;      /* kekalkan square */
+          max-width: 600px;         /* optional - had maksimum */
+          margin-bottom: 20px;
+          overflow: hidden;
+          border-radius: 1rem;
+          position: relative;
         }
+        
         .slider-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;        /* atau 'contain' jika mahu tiada crop */
+          object-position: center center;
+          position: absolute;
+          opacity: 0;
+          transition: opacity 1s ease-in-out;
         }
-        .slider-image.active {
-            opacity: 1;
-        }
+        .slider-image.active { opacity: 1; }
 
         /* Slider Navigation Buttons */
         .slider-nav-btn {
@@ -162,6 +153,111 @@
         .stat-card-link:hover {
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             transform: translateY(-3px);
+        }
+        
+        /* POPUP OVERLAY */
+        #popup-warning-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        
+            /* Latar hitam + blur belakang */
+            background: rgba(0, 0, 0, 0.45);        /* gelap lembut */
+            backdrop-filter: blur(10px);            /* blur belakang */
+            -webkit-backdrop-filter: blur(10px);    /* untuk Safari */
+        
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        
+            /* Smooth fade-in (optional) */
+            transition: opacity 0.25s ease;
+            opacity: 1;
+        }
+        
+        /* POPUP OVERLAY - Full Screen Fix */
+        #popup-warning-overlay {
+            position: fixed;
+            /* Gunakan inset: 0 supaya ia memenuhi skrin penuh tanpa mengira saiz wrapper */
+            inset: 0; 
+            width: 100%;
+            height: 100%;
+        
+            /* Latar hitam + blur */
+            background: rgba(0, 0, 0, 0.6); /* Gelapkan sikit lagi supaya teks lebih jelas */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            /* Pastikan z-index paling tinggi supaya ia duduk di atas segalanya */
+            z-index: 99999; 
+            
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* POPUP BOX - Responsive Fix */
+        #popup-warning-box {
+            background: rgba(255, 255, 255, 0.95); /* Lebih solid supaya mudah baca */
+            width: 85%; /* Jangan terlalu lebar di mobile */
+            max-width: 350px; /* Limit saiz maksimum */
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            
+            /* Shadow yang lebih cantik */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            
+            /* Animasi masuk sedikit */
+            animation: popupIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* Animasi supaya popup nampak 'pop' */
+        @keyframes popupIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        #popup-warning-box h2 {
+            font-size: 1.25rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #1e293b;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        #popup-warning-box p {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        #popup-warning-button {
+            background: #0ea5e9; /* Warna biru cerah */
+            border: none;
+            padding: 12px 24px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.1s;
+            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.3);
+        }
+        
+        #popup-warning-button:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -248,11 +344,24 @@
         <!-- Menu Footer -->
         <div class="p-4 border-t border-white/10 text-center">
              <p class="text-xs text-gray-500">Misi Pemburuan Sotong 2026</p>
+             <p class="text-xs text-gray-500">©mie086</p>
         </div>
     </div>
     
     <!-- WRAPPER FOR MOBILE SCREEN RESOLUTION (Restored) -->
-    <div id="mobile-wrapper" class="relative">
+    <div id="mobile-wrapper">
+
+        <!-- PopUp Warning -->
+        <div id="popup-warning-overlay" style="display:none;">
+            <div id="popup-warning-box">
+                <h2>PESANAN:</h2>
+                <p>
+                    Untuk paparan terbaik, sila <strong>zoom in atau zoom out</strong> 
+                    kerana halaman ini masih dalam versi beta. Terima Kasih.
+                </p>
+                <button id="popup-warning-button">Saya Faham</button>
+            </div>
+        </div>
 
         <!-- Navbar / Header -->
         <nav class="bg-gradient-to-r from-slate-900 via-blue-900 to-emerald-900 text-white p-4 shadow-lg sticky top-0 z-50 border-b border-blue-800/50 backdrop-blur-md bg-opacity-90">
@@ -284,11 +393,6 @@
                             </p>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <button id="authBtn" onclick="toggleAdminMode()" class="text-sm bg-blue-800/50 hover:bg-blue-700 hover:shadow-md px-4 py-2 rounded-lg transition border border-blue-500/50 flex items-center gap-2 backdrop-blur-sm">
-                        <i class="fa-solid fa-lock text-xs"></i> <span class="hidden md:inline">Admin Login</span>
-                    </button>
                 </div>
             </div>
         </nav>
@@ -390,7 +494,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-base">Pusat Bantuan</h3>
-                        <p class="text-yellow-100 text-xs">Hubungi Admin Squad.</p>
+                        <p class="text-yellow-100 text-xs">Hubungi Admin.</p>
                     </div>
                 </div>
             </div>
@@ -423,13 +527,10 @@
                         </h3>
                         
                         <p class="text-justify">
-                            Al-kisah, maka terbukalah laman rasmi <span class="text-emerald-600 font-bold">Misi Pemburuan Sotong 2026</span>, tanda bermulanya pelayaran besar menuju <span class="text-emerald-600 font-bold">Laut China Selatan</span>. Perjalanan ini bukanlah pengembaraan biasa, melainkan usaha menawan rezeki laut di bawah pimpinan <span class="font-bold text-gray-900">ManRemy</span> dan <span class="font-bold text-gray-900">John</span>.
+                            Selamat Datang ke laman rasmi <span class="text-emerald-600 font-bold">Misi Pemburuan Sotong 2026</span> yang telah dirangka bentuk bagi menandakan pelancaran operasi strategik menuju perairan <span class="text-emerald-600 font-bold">Laut China Selatan</span>. Misi ini tidak hanya berfungsi sebagai ekspedisi pengumpulan hasil laut, tetapi merupakan inisiatif bersepadu yang disusun secara sistematik untuk mengoptimumkan keupayaan penangkapan di bawah pimpinan <span class="font-bold text-gray-900">ManRemy</span> dan <span class="font-bold text-gray-900">John</span>.
                         </p>
                         <p class="text-justify">
-                            Syahadan, berkumpullah segala ahli armada: <span class="font-bold text-gray-900">CheLan, Mie, AbgRizal, Rusdi, AbgLan, Man, AbgWan dan Hariz</span> bersiap dengan peralatan dan jadual masing-masing.
-                        </p>
-                        <p class="text-justify">
-                            Hatta, dengan kesungguhan itu, harapan menikmati hasil laut segar bukan lagi khabar angin, melainkan tujuan yang semakin hampir. Maka armada ini bertekad sebulat hati untuk <span class="font-bold text-gray-900">penuhkan tong dan pulang sebagai legenda</span>.
+                            Berbekalkan komitmen konsisten seluruh pasukan, objektif memperoleh hasil laut segar pada tahap optimum semakin hampir direalisasikan. Armada ini beriltizam melaksanakan operasi mengikut piawaian kecekapan yang ditetapkan dan memastikan setiap tugas mencapai sasaran produktiviti sebelum kembali dengan rekod prestasi yang mengesahkan keupayaan mereka sebagai penggerak utama misi ini.
                         </p>
                     </div>
 
@@ -496,7 +597,7 @@
                         <!-- Motto -->
                         <div class="mt-4 pt-2 border-t border-dashed border-gray-200">
                              <p class="text-[10px] font-bold text-gray-400 uppercase mb-1 text-center">Motto Rasmi</p>
-                             <p class="font-serif text-xs text-center text-slate-800 font-bold italic">"Selagi Tak Dapat, Jangan Mimpi Nak Balik! Biar Rentung Di Laut, Janji Tak Malu Di Darat!"</p>
+                             <p class="font-serif text-xs text-center text-slate-800 font-bold italic">"Biar Berputih Tulang, Jangan Berputih Mata."</p>
                         </div>
                     </div>
 
@@ -836,12 +937,12 @@
                                     
                                     <div class="grid grid-cols-2 gap-2">
                                         <div class="bg-gray-50 p-2 rounded-lg text-center border border-gray-100">
-                                            <span class="block text-[9px] text-gray-400 uppercase">Simpan Bulanan Untuk Capai Target</span>
+                                            <span class="block text-[9px] text-gray-400 uppercase">Bayar Sebulan:</span>
                                             <span id="calcMonthly" class="block text-sm font-bold text-emerald-600">RM 0</span>
                                         </div>
                                         <div class="bg-gray-50 p-2 rounded-lg text-center border border-gray-100">
-                                            <span class="block text-[9px] text-gray-400 uppercase">Simpan Mingguan Untuk Capai Target</span>
-                                            <span id="calcWeekly" class="block text-sm font-bold text-blue-600">RM 0</span>
+                                            <span class="block text-[9px] text-gray-400 uppercase">Bayar Sehari:</span>
+                                            <span id="calcDaily" class="block text-sm font-bold text-blue-600">RM 0</span>
                                         </div>
                                     </div>
                                     
@@ -861,7 +962,7 @@
                                 </p>
                                 
                             <!-- Maintenance Placeholder -->
-                            <div class="bg-white p-2 rounded-xl border-2 border-dashed border-teal-300 mb-3 w-32 h-32 
+                            <div class="bg-white p-2 rounded-xl border-2 border-dashed border-teal-300 mb-3 w-32 h-35 
                                         flex items-center justify-center relative overflow-hidden shadow-sm">
                             
                                 <div class="text-center px-1 leading-tight">
@@ -873,7 +974,7 @@
                                     <p class="text-[10px] text-gray-700 font-medium">
                                         <span class="font-bold text-amber-600">Under Maintenance</span><br>
                                         Sila rujuk pada grup WhatsApp<br>
-                                        atau hubungi <span class="font-bold">Hariz</span><br>
+                                        atau hubungi <span class="font-bold">Fahmie</span><br>
                                         bagi proses pembayaran.
                                     </p>
                                 </div>
@@ -882,7 +983,7 @@
 
                                 <div class="bg-gray-50 rounded-lg p-2 w-full max-w-[200px] mb-3 border border-gray-100">
                                     <p class="text-[10px] text-gray-400 uppercase">Scan QR</p>
-                                    <p class="text-xs font-bold text-gray-800">CIMB (Hariz)</p>
+                                    <p class="text-xs font-bold text-gray-800">MAYBANK (Fahmie)</p>
                                 </div>
 
                                 <!-- Important Note (Compact) -->
@@ -919,15 +1020,6 @@
                                 <h2 class="font-extrabold text-xl leading-snug" id="tableTitle">Tabung Pemburu Sotong</h2>
                                 <p class="text-xs font-medium text-blue-200 uppercase tracking-widest">Senarai Semak Pembayaran</p>
                             </div>
-                             <!-- Admin Controls Integrated -->
-                            <span id="adminBadge" class="hidden bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-200 animate-pulse z-20">ADMIN MODE</span>
-                        </div>
-                        
-                        <!-- Add Member Button (Admin Only) -->
-                        <div class="mt-3 flex justify-end">
-                            <button id="addMemberBtn" onclick="addMember()" class="hidden bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-full hover:bg-emerald-600 shadow-lg shadow-emerald-900/50 transition transform active:scale-95">
-                                <i class="fa-solid fa-plus mr-1"></i> Tambah Ahli
-                            </button>
                         </div>
                     </div>
                     <!-- END NEW THEMED HEADER -->
@@ -979,7 +1071,6 @@
                                     <th class="p-3 font-semibold text-center">Bayar</th>
                                     <!-- UPDATED: Column Header Changed from Baki to Rekod/Perincian -->
                                     <th class="p-3 font-semibold text-center">Rekod</th> 
-                                    <th class="p-3 font-semibold text-center admin-col hidden">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="memberTableBody" class="divide-y divide-gray-100 bg-white">
@@ -1021,9 +1112,6 @@
                             </div>
                         </div>
 
-                        <button id="addExpenseBtn" onclick="openExpenseModal()" class="hidden bg-orange-500 text-white text-sm px-3 py-1.5 rounded hover:bg-orange-600 shadow-sm transition transform active:scale-95 w-full mt-2">
-                            <i class="fa-solid fa-plus mr-1"></i> Tambah Belanja
-                        </button>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -1034,7 +1122,6 @@
                                     <th class="p-3 font-semibold w-24">Tarikh</th>
                                     <th class="p-3 font-semibold">Kategori & Perincian</th>
                                     <th class="p-3 font-semibold text-right w-24">Jumlah (RM)</th>
-                                    <th class="p-3 font-semibold text-center admin-col hidden w-20">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="expensesTableBody" class="divide-y divide-gray-100 bg-white">
@@ -1069,7 +1156,7 @@
                         <h3 class="font-bold text-gray-800 text-base mb-2 relative z-10">Under Maintenance</h3>
                         <!-- UPDATED TEXT -->
                         <p class="text-sm text-gray-500 max-w-xs leading-relaxed relative z-10">
-                            Sila Berhubung atau Berjumpa dengan Admin Squad!. Terima Kasih.
+                            Sila Berhubung atau Berjumpa dengan Admin!. Terima Kasih.
                         </p>
                         
                         <div class="mt-6 px-4 py-1.5 bg-gray-200 rounded-full text-xs font-mono text-gray-600 relative z-10 border border-gray-300">
@@ -1088,13 +1175,13 @@
                             <i class="fa-solid fa-circle-question text-yellow-500"></i> Pusat Bantuan
                         </h2>
                         <p class="text-xs text-gray-600 mt-1">
-                            "Jika ada sebarang kekeliruan dalam program, sila hubungi atau berjumpa Admin Squad untuk bantuan segera."
+                            "Jika ada sebarang kekeliruan dalam program, sila hubungi atau berjumpa Admin untuk bantuan segera."
                         </p>
                     </div>
                     
                     <div class="p-4 bg-white">
                         <p class="text-xs text-gray-600 mb-4 text-justify leading-relaxed">
-                            Adapun sekiranya timbul apa jua kesukaran sama ada kekurangan belanja, tidak diketahui hendak menumpang kereta siapa, ataupun ingin memohon lagu tatkala kita berkaraoke di atas perahu kelak, maka janganlah pemburu sekalian malu atau segan. Syahadan, rogerlah segera kedua <strong>"Iron Man"</strong> kita itu kerana merekalah yang sudi berkhidmat demi kelancaran segala urusan misi sotong ini.
+                            Sekiranya timbul sebarang kesukaran, sama ada melibatkan kekangan perbelanjaan, keperluan pengangkutan, atau permintaan khusus semasa aktiviti di lapangan, para pemburu sekalian tidak perlu berasa segan untuk mendapatkan bantuan. Sila hubungi atau berjumpa kedua-dua sahabat penyelaras kita, kerana mereka komited untuk membantu bagi memastikan kelancaran keseluruhan perjalanan misi ini.
                         </p>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1106,7 +1193,7 @@
                                 <div class="flex-1">
                                     <h4 class="font-bold text-sm text-gray-800">John</h4>
                                     <!-- UPDATED: Gelaran ringkas -->
-                                    <span class="text-[10px] text-blue-600 font-medium uppercase tracking-wide bg-blue-100 px-1.5 py-0.5 rounded">ADMIN SQUAD</span>
+                                    <span class="text-[10px] text-blue-600 font-medium uppercase tracking-wide bg-blue-100 px-1.5 py-0.5 rounded">ADMIN</span>
                                     <div class="flex flex-col gap-2 mt-2">
                                         <button ="alert('Mendail John...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
@@ -1126,7 +1213,7 @@
                                 <div class="flex-1">
                                     <h4 class="font-bold text-sm text-gray-800">ManRemy</h4>
                                     <!-- UPDATED: Gelaran ringkas -->
-                                    <span class="text-[10px] text-purple-600 font-medium uppercase tracking-wide bg-purple-100 px-1.5 py-0.5 rounded">ADMIN SQUAD</span>
+                                    <span class="text-[10px] text-purple-600 font-medium uppercase tracking-wide bg-purple-100 px-1.5 py-0.5 rounded">ADMIN</span>
                                     <div class="flex flex-col gap-2 mt-2">
                                         <button ="alert('Mendail ManRemy...')" class="w-full text-xs bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 transition flex items-center justify-center gap-2">
                                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
@@ -1194,7 +1281,7 @@
               <!-- Flex untuk ayat + butang (butang boleh dibuang jika tidak perlu) -->
               <div class="flex items-center gap-2">
                 <p class="text-[10px] text-yellow-800 leading-tight">
-                  Sila <strong>MAKLUMKAN!</strong> kepada Admin Squad jika terdapat sebarang kesilapan dan <strong>TUNGGU!</strong> 4-5 minit untuk Admin Squad mengemaskini pada sejarah pembayaran.
+                  Sila <strong>MAKLUMKAN!</strong> kepada Admin jika terdapat sebarang kesilapan dan <strong>TUNGGU!</strong> 4-5 minit untuk Admin mengemaskini pada sejarah pembayaran.
                 </p>
               </div>
             </div>
@@ -1253,38 +1340,6 @@
         </div>
     </div>
 
-    <!-- MODAL: Admin Login -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform" id="loginModalContent">
-            <h3 class="font-bold text-lg mb-4 text-gray-800">Admin Login</h3>
-            <p class="text-sm text-gray-500 mb-4">Sila masukkan butiran log masuk.</p>
-            <input type="text" id="adminUsernameInput" class="w-full p-3 border border-gray-300 rounded-lg mb-3 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Nama Pengguna">
-            <input type="password" id="adminPasswordInput" class="w-full p-3 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Kata Laluan">
-            <p id="loginError" class="text-red-500 text-xs font-bold hidden mb-4 mt-2">Nama pengguna atau kata laluan salah!</p>
-            <div class="flex justify-end gap-2 mt-4">
-                <button onclick="closeLoginModal()" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Batal</button>
-                <button onclick="attemptLogin()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium">Masuk</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: Delete Confirmation -->
-    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform" id="deleteModalContent">
-            <div class="text-center mb-4">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
-                    <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900">Padam Rekod?</h3>
-                <p class="text-sm text-gray-500 mt-2">Adakah anda pasti mahu memadam rekod <span id="deleteItemName" class="font-bold text-gray-800"></span>? Tindakan ini tidak boleh dikembalikan.</p>
-            </div>
-            <div class="flex justify-center gap-3 mt-6">
-                <button onclick="closeDeleteModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition">Batal</button>
-                <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium shadow-md transition">Ya, Padam</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         
         // --- CONFIGURATION ---
@@ -1308,23 +1363,33 @@
         // Peringatan: Data ini adalah 'mock data'.
         // Added 'history' array to simulate payment details.
         let members = [
-            { id: 1, name: 'Mie', paid: 500, history: [{date: '2025-01-10', amount: 200}, {date: '2025-02-15', amount: 300}] },
-            { id: 2, name: 'John', paid: 150, history: [{date: '2025-01-20', amount: 150}] },
-            { id: 3, name: 'ManRemy', paid: 100, history: [{date: '2025-02-10', amount: 100}] },
-            { id: 4, name: 'Man', paid: 250, history: [{date: '2025-01-05', amount: 100}, {date: '2025-02-01', amount: 150}] },
-            { id: 5, name: 'CheLan', paid: 450, history: [{date: '2024-12-12', amount: 450}] },
-            { id: 6, name: 'AbgLan', paid: 50, history: [{date: '2025-01-30', amount: 50}] },
-            { id: 7, name: 'AbgWan', paid: 500, history: [{date: '2024-11-20', amount: 500}] },
-            { id: 8, name: 'Hariz', paid: 100, history: [{date: '2025-02-10', amount: 100}] },
-            { id: 9, name: 'Rusdi', paid: 400, history: [{date: '2025-01-15', amount: 200}, {date: '2025-02-20', amount: 200}] },
-            { id: 10, name: 'AbgRizal', paid: 90, history: [{date: '2025-01-15', amount: 50}, {date: '2025-02-20', amount: 40}] }
+            { id: 1, name: 'Mie', paid: 100, history: [{date: '2025-10-10', amount: 50}, {date: '2025-10-16', amount: 50}] },
+            { id: 2, name: 'John', paid: 200, history: [{date: '2025-10-10', amount: 50}, {date: '2025-10-16', amount: 50}, {date: '2025-12-03', amount: 100}] },
+            { id: 3, name: 'ManRemy', paid: 50, history: [{date: '2025-10-16', amount: 50}] },
+            { id: 4, name: 'Man', paid: 250, history: [{date: '2025-10-10', amount: 50}, {date: '2025-10-16', amount: 100}, {date: '2025-10-27', amount: 50}, {date: '2025-12-03', amount: 50}] },
+            { id: 5, name: 'En Lan', paid: 150, history: [{date: '2025-10-09', amount: 50}, {date: '2025-10-16', amount: 100}] },
+            { id: 6, name: 'AbgLan', paid: 250, history: [{date: '2025-10-10', amount: 50}, {date: '2025-12-03', amount: 100}, {date: '2025-12-03', amount: 100}] },
+            { id: 7, name: 'AbgWan', paid: 100, history: [{date: '2025-10-10', amount: 50}, {date: '2025-10-16', amount: 50}] },
+            { id: 8, name: 'Hariz', paid: 100, history: [{date: '2025-10-16', amount: 100}] },
+            { id: 9, name: 'Rosdi', paid: 100, history: [{date: '2025-10-10', amount: 50}, {date: '2025-10-16', amount: 50}] },
+            { id: 10, name: 'AbgRizal', paid: 100, history: [{date: '2025-10-16', amount: 100}] }
         ];
 
         let expenses = [
-            { id: 101, date: '2025-01-15', category: 'Homestay', detail: 'Deposit Homestay Port Dickson', amount: 200 },
-            { id: 102, date: '2025-02-01', category: 'Pengangkutan', detail: 'Bayar Booking (Van Sewa)', amount: 150 },
-            { id: 103, date: '2025-02-06', category: 'Pengangkutan', detail: 'Bayar Booking (Full)', amount: 190 }
+            { id: 101, date: '2025-10-10', category: 'Pengangkutan', detail: 'Bayar Booking (Boat)', amount: 350 },
+            { id: 102, date: '2025-10-16', category: 'Pengangkutan', detail: 'Bayar Booking (Van VVIP)', amount: 550 }
         ];
+
+        // --- Pop Up(new) ---
+        document.addEventListener("DOMContentLoaded", function () {
+            // Buka popup setiap kali halaman dibuka/refresh
+            document.getElementById("popup-warning-overlay").style.display = "flex";
+        
+            // Tutup popup bila tekan butang
+            document.getElementById("popup-warning-button").onclick = function () {
+                document.getElementById("popup-warning-overlay").style.display = "none";
+            };
+        });
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -1996,125 +2061,75 @@
         window.alert = (message) => showStatusModal("Notifikasi", message, "info");
 
 
-        // --- CALCULATOR LOGIC (UPDATED WITH SUGGESTION) ---
-        function calculateSavings() {
-            const currentSavings = parseFloat(document.getElementById('calcCurrentSavings').value) || 0;
-            const paidAmount = parseFloat(document.getElementById('calcPaidAmount').value) || 0; // Ambil nilai yang dah dibayar
-            
-            // Formula Baru: Target - (Duit Tangan + Duit Dah Bayar)
-            const totalAssets = currentSavings + paidAmount;
-            const needed = Math.max(0, TARGET_PER_PERSON - totalAssets);
-            
-            document.getElementById('calcNeeded').innerText = formatCurrency(needed);
-
-            const timeData = getRemainingTime();
-            
-            const suggestionBox = document.getElementById('calcSuggestion');
-            const suggestionText = document.getElementById('calcSuggestionText');
-
-            if (timeData.expired || needed <= 0) {
-                 document.getElementById('calcMonthly').innerText = "RM 0";
-                 document.getElementById('calcWeekly').innerText = "RM 0";
-                 
-                 suggestionBox.classList.add('hidden');
-                 if(needed <= 0) {
-                     suggestionBox.classList.remove('hidden');
-                     suggestionText.innerText = `Mantap! Target bayaran anda (RM ${TARGET_PER_PERSON}) sudah dicapai!`;
-                     suggestionBox.classList.remove('bg-indigo-50');
-                     suggestionBox.classList.add('bg-emerald-50');
-                 }
-                 return;
-            }
-
-            // Using total days for a more accurate calculation
-            const weeksLeft = Math.max(1, Math.ceil(timeData.totalDays / 7));
-            const weeklyPayment = needed / weeksLeft;
-            const monthsLeft = Math.max(1, timeData.displayMonths); // Use display months for cleaner rounding
-            const monthlyPayment = needed / (monthsLeft || 1);
-
-            document.getElementById('calcMonthly').innerText = formatCurrency(monthlyPayment);
-            document.getElementById('calcWeekly').innerText = formatCurrency(weeklyPayment);
-            
-            suggestionBox.classList.remove('hidden');
-            suggestionBox.classList.add('bg-indigo-50'); // Ensure background is correct for saving
-            suggestionText.innerText = `Tips: Simpan RM${Math.ceil(weeklyPayment)} seminggu dari sekarang untuk capai target dalam ${weeksLeft} minggu.`;
+        // Helper: selalu paparkan 2 decimal places
+        function formatCurrencyFixed(amount) {
+          const num = Number.isFinite(amount) ? amount : 0;
+          return 'RM ' + num.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
         }
-
-        // --- ADMIN / MODALS LOGIC ---
         
-        function toggleAdminMode() {
-            if (isAdmin) {
-                // Logout
-                isAdmin = false;
-                sessionStorage.removeItem('isAdmin');
-                document.getElementById('authBtn').innerHTML = '<i class="fa-solid fa-lock"></i> <span class="hidden md:inline">Admin Login</span>';
-                document.getElementById('authBtn').classList.remove('bg-red-600', 'border-red-500');
-                document.getElementById('authBtn').classList.add('bg-blue-800/50', 'border-blue-500/50');
-                document.getElementById('adminBadge').classList.add('hidden');
-                document.getElementById('addMemberBtn').classList.add('hidden');
-                document.getElementById('addExpenseBtn').classList.add('hidden');
-                
-                document.querySelectorAll('.admin-col').forEach(el => el.classList.add('hidden'));
-                
-                // Re-render to hide Admin columns immediately
-                renderTable();
-                renderExpenses();
-                showStatusModal("Log Keluar", "Anda telah log keluar dari Mod Admin.", "info");
-
-            } else {
-                openLoginModal();
+        // Kalkulator utama — menggunakan calcDaily sahaja (tidak lagi calcWeekly)
+        function calculateSavings() {
+          const currentSavings = parseFloat(document.getElementById('calcCurrentSavings').value) || 0;
+          const paidAmount = parseFloat(document.getElementById('calcPaidAmount').value) || 0;
+        
+          const totalAssets = currentSavings + paidAmount;
+          const needed = Math.max(0, Number(TARGET_PER_PERSON) - totalAssets); // pastikan TARGET_PER_PERSON numeric
+        
+          // Papar baki diperlukan dengan 2 dp
+          document.getElementById('calcNeeded').innerText = formatCurrencyFixed(parseFloat(needed.toFixed(2)));
+        
+          const timeData = getRemainingTime();
+          const suggestionBox = document.getElementById('calcSuggestion');
+          const suggestionText = document.getElementById('calcSuggestionText');
+        
+          // Jika expired atau tiada needed
+          if (timeData.expired || needed <= 0) {
+            document.getElementById('calcMonthly').innerText = formatCurrencyFixed(0);
+            // hanya calcDaily wujud sekarang
+            if (document.getElementById('calcDaily')) {
+              document.getElementById('calcDaily').innerText = formatCurrencyFixed(0);
             }
-        }
-
-        function openLoginModal() {
-            const modal = document.getElementById('loginModal');
-            document.getElementById('adminUsernameInput').value = '';
-            document.getElementById('adminPasswordInput').value = '';
-            document.getElementById('loginError').classList.add('hidden');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                document.getElementById('loginModalContent').classList.remove('scale-95');
-                document.getElementById('loginModalContent').classList.add('scale-100');
-                document.getElementById('adminUsernameInput').focus();
-            }, 10);
-        }
-
-        function closeLoginModal() {
-            const modal = document.getElementById('loginModal');
-            document.getElementById('loginModalContent').classList.remove('scale-100');
-            document.getElementById('loginModalContent').classList.add('scale-95');
-            setTimeout(() => { modal.classList.add('hidden'); }, 150);
-        }
-
-        function attemptLogin() {
-            const user = document.getElementById('adminUsernameInput').value;
-            const pass = document.getElementById('adminPasswordInput').value;
-            
-            // Admin Credentials are hardcoded (as mock data)
-            if (user === 'fahmie' && pass === 'Ummc@1234567890') {
-                enableAdminMode();
-                closeLoginModal();
-                showStatusModal("Log Masuk Berjaya", "Mod Admin diaktifkan. Anda kini boleh mengedit rekod.", "success");
-            } else {
-                document.getElementById('loginError').classList.remove('hidden');
+            suggestionBox.classList.add('hidden');
+        
+            if (needed <= 0) {
+              suggestionBox.classList.remove('hidden');
+              suggestionText.innerText = `Mantap! Target bayaran anda (RM ${formatCurrencyFixed(Number(TARGET_PER_PERSON))}) sudah dicapai!`;
+              suggestionBox.classList.remove('bg-indigo-50');
+              suggestionBox.classList.add('bg-emerald-50');
             }
-        }
-
-        function enableAdminMode() {
-            isAdmin = true;
-            sessionStorage.setItem('isAdmin', 'true');
-            document.getElementById('authBtn').innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Logout';
-            document.getElementById('authBtn').classList.remove('bg-blue-800/50', 'border-blue-500/50');
-            document.getElementById('authBtn').classList.add('bg-red-600', 'border-red-500');
-            document.getElementById('adminBadge').classList.remove('hidden');
-            document.getElementById('addMemberBtn').classList.remove('hidden');
-            document.getElementById('addExpenseBtn').classList.remove('hidden'); 
-            
-            document.querySelectorAll('.admin-col').forEach(el => el.classList.remove('hidden'));
-            
-            // Re-render to show Admin columns immediately
-            renderTable();
-            renderExpenses();
+            return;
+          }
+        
+          // Kiraan harian dan bulanan
+          const daysLeft = Math.max(1, Math.ceil(timeData.totalDays));
+          const rawDaily = needed / daysLeft;
+          const dailyTwo = parseFloat(rawDaily.toFixed(2));   // 2 dp (contoh 1.94)
+          const dailyCeil = Math.ceil(rawDaily);              // bulat ke atas (contoh 2)
+        
+          const monthsLeft = Math.max(1, timeData.displayMonths);
+          const rawMonthly = needed / (monthsLeft || 1);
+          const monthlyTwo = parseFloat(rawMonthly.toFixed(2));
+        
+          // Update UI — hanya calcDaily
+          document.getElementById('calcMonthly').innerText = formatCurrencyFixed(monthlyTwo);
+          if (document.getElementById('calcDaily')) {
+            document.getElementById('calcDaily').innerText = formatCurrencyFixed(dailyTwo);
+          }
+        
+          suggestionBox.classList.remove('hidden');
+          suggestionBox.classList.add('bg-indigo-50');
+        
+          suggestionText.innerText = `Tips: Bayar ${formatCurrencyFixed(dailyTwo)} sehari dari sekarang untuk capai target dalam ${daysLeft} hari.`;
+        
+          // Debug — keluarkan semasa deployment jika tidak diperlukan
+          console.debug('calculateSavings debug:', {
+            currentSavings, paidAmount, totalAssets, needed,
+            daysLeft, rawDaily, dailyTwo, dailyCeil,
+            monthsLeft, rawMonthly, monthlyTwo
+          });
         }
 
         // --- EDIT / ADD / DELETE HELPERS ---
