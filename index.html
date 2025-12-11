@@ -248,16 +248,27 @@
             <div id="checklistSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden border border-gray-100">
                 <div class="bg-slate-800 p-4 text-white flex items-center justify-between">
                     <h3 class="font-bold text-sm flex gap-2"><i class="fa-solid fa-clipboard-check text-emerald-400"></i> Checklist Angler</h3>
-                    <button id="resetChecklistBtn" class="text-[10px] bg-red-500/20 text-red-300 px-2 py-1 rounded hover:bg-red-500 hover:text-white transition">Reset</button>
-                </div>
+                    </div>
+                
                 <div class="p-4 bg-white space-y-3">
                     <section>
                         <header class="cat-header flex justify-between cursor-pointer font-bold text-sm text-gray-700" data-target="memancing">
                             <span><i class="fa-solid fa-fish text-emerald-500 mr-2"></i> Memancing</span><i class="fa-solid fa-chevron-down text-gray-400"></i>
                         </header>
                         <div class="category-body mt-2 pl-6 space-y-2 hidden">
-                            <label class="flex gap-2 items-center"><input type="checkbox" class="check-item" data-key="joran"><span class="text-xs">Joran & Mesin</span></label>
-                            <label class="flex gap-2 items-center"><input type="checkbox" class="check-item" data-key="candat"><span class="text-xs">Candat (Spare)</span></label>
+                            <div class="flex gap-2 items-center"><i class="fa-solid fa-angle-right text-gray-300 text-xs"></i><span class="text-xs">Joran & Mesin <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></div>
+                            <div class="flex gap-2 items-center"><i class="fa-solid fa-angle-right text-gray-300 text-xs"></i><span class="text-xs">Candat (Spare) <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></div>
+                            <div class="flex gap-2 items-center"><i class="fa-solid fa-angle-right text-gray-300 text-xs"></i><span class="text-xs">Sarung Tangan <span class="ml-2 text-xs font-medium text-emerald-700 rounded px-1 bg-emerald-50">(pilihan)</span></div>
+                        </div>
+                    </section>
+                    
+                    <section>
+                        <header class="cat-header flex justify-between cursor-pointer font-bold text-sm text-gray-700" data-target="pakaian">
+                            <span><i class="fa-solid fa-shirt text-blue-500 mr-2"></i> Pakaian</span><i class="fa-solid fa-chevron-down text-gray-400"></i>
+                        </header>
+                        <div class="category-body mt-2 pl-6 space-y-2 hidden">
+                            <div class="flex gap-2 items-center"><i class="fa-solid fa-angle-right text-gray-300 text-xs"></i><span class="text-xs">Baju Hujan <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></div>
+                            <div class="flex gap-2 items-center"><i class="fa-solid fa-angle-right text-gray-300 text-xs"></i><span class="text-xs">Towel Kecil <span class="ml-2 text-xs font-medium text-white bg-red-500 rounded px-1">(wajib)</span></div>
                         </div>
                     </section>
                 </div>
@@ -593,7 +604,6 @@
                     h.querySelector('.fa-chevron-down').classList.toggle('rotate-180');
                 });
             });
-            document.getElementById('resetChecklistBtn').addEventListener('click', ()=>{ document.querySelectorAll('.check-item').forEach(c => c.checked = false); });
         }
     </script>
 </body>
