@@ -200,7 +200,7 @@
                 <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
                     <table class="w-full text-left border-collapse">
                         <thead class="sticky top-0 bg-gray-50 shadow-sm z-10">
-                            <tr class="text-gray-500 text-[10px] uppercase"><th class="p-3">Nama</th><th class="p-3 text-center">Prog.</th><th class="p-3 text-center">Bayar</th><th class="p-3 text-center">Rekod</th></tr>
+                            <tr class="text-gray-500 text-[10px] uppercase"><th class="p-3">Nama</th><th class="p-3 text-center">Prog.</th><th class="p-3 text-center">Bayar (RM)</th><th class="p-3 text-center">Rekod</th></tr>
                         </thead>
                         <tbody id="memberTableBody" class="divide-y divide-gray-100 bg-white text-xs"></tbody>
                     </table>
@@ -208,17 +208,37 @@
             </div>
 
             <div id="expensesSection" class="glass-panel rounded-2xl shadow-sm overflow-hidden h-fit">
-                <div class="bg-gradient-to-r from-yellow-800 to-yellow-900 p-4 relative text-white">
+                <div class="bg-[#78350f] p-4 text-white relative">
                     <h2 class="font-bold text-lg mb-1 flex items-center gap-2"><i class="fa-solid fa-receipt"></i> Laporan Dana</h2>
-                    <p class="text-yellow-200 text-xs uppercase">Rekod Perbelanjaan</p>
+                    <p class="text-yellow-200 text-[10px] uppercase tracking-wider">Rekod Perbelanjaan</p>
                 </div>
-                <div class="p-4 bg-gray-50 flex justify-around text-xs border-b border-gray-200">
-                    <div class="text-center"><div class="text-gray-400">Belanja</div><div class="font-bold text-red-500" id="summaryExpenses">RM 0</div></div>
-                    <div class="w-px bg-gray-300"></div>
-                    <div class="text-center"><div class="text-gray-400">Baki Bersih</div><div class="font-bold text-blue-600" id="summaryNetBalance">RM 0</div></div>
+                
+                <div class="p-5 bg-white flex justify-between items-center text-center border-b border-gray-100">
+                    <div class="flex-1">
+                        <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Terkumpul</div>
+                        <div class="font-bold text-emerald-500 text-sm" id="summaryCollected">RM 0</div>
+                    </div>
+                    
+                    <div class="w-px h-8 bg-gray-200"></div>
+                    
+                    <div class="flex-1">
+                        <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Belanja</div>
+                        <div class="font-bold text-red-500 text-sm" id="summaryExpenses">RM 0</div>
+                    </div>
+
+                    <div class="w-px h-8 bg-gray-200"></div>
+
+                    <div class="flex-1">
+                        <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Baki Bersih</div>
+                        <div class="font-bold text-blue-600 text-sm" id="summaryNetBalance">RM 0</div>
+                    </div>
                 </div>
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
+                        <thead class="bg-orange-50 text-orange-800 text-[10px] uppercase">
+                            <tr><th class="p-3 w-24">Tarikh</th><th class="p-3">Kategori & Perincian</th><th class="p-3 w-24">Jumlah (RM)</th></tr>
+                        </thead>
                         <tbody id="expensesTableBody" class="divide-y divide-gray-100 bg-white text-xs"></tbody>
                     </table>
                     <div id="noExpensesMsg" class="p-6 text-center text-gray-400 hidden text-sm">Tiada rekod lagi.</div>
@@ -508,7 +528,7 @@
             document.getElementById('tableSummaryCollected').innerText = formatCurrency(totalCollected);
             const globalPct = (totalCollected / (members.length * TARGET_PER_PERSON)) * 100;
             document.getElementById('tableSummaryProgress').style.width = globalPct + '%';
-            updateExpenseSummary(totalCollected);
+            updateExpensesSummary(totalCollected);
         }
 
         function openDetails(id) {
@@ -532,19 +552,34 @@
                         <td class="p-3 align-top text-gray-500">${e.date}</td>
                         <td class="p-3">
                             <div class="font-bold text-gray-700">${e.category}</div>
-                            <div class="text-[10px] text-gray-400">${e.detail}</div>
+                            <div class="text-[10px] text-gray-400">&bull; ${e.detail}</div>
                         </td>
                         <td class="p-3 text-right font-bold text-red-500">-${e.amount}</td>
                     </tr>`;
             });
         }
-        function updateExpenseSummary(collected) {
-            const spent = expenses.reduce((a,b) => a + b.amount, 0);
-            document.getElementById('summaryExpenses').innerText = formatCurrency(spent);
-            const bal = collected - spent;
-            const balEl = document.getElementById('summaryNetBalance');
-            balEl.innerText = formatCurrency(bal);
-            balEl.className = bal < 0 ? "font-bold text-red-600" : "font-bold text-blue-600";
+        function updateExpensesSummary(totalCollected) {
+            // Kira total belanja
+            let totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+            let netBalance = totalCollected - totalExpenses;
+
+            // 1. Update Kolum Terkumpul (ID baru: summaryCollected)
+            const collectedEl = document.getElementById('summaryCollected');
+            if (collectedEl) collectedEl.innerText = formatCurrency(totalCollected);
+
+            // 2. Update Kolum Belanja
+            const expEl = document.getElementById('summaryExpenses');
+            if (expEl) expEl.innerText = formatCurrency(totalExpenses);
+
+            // 3. Update Kolum Baki Bersih
+            const netEl = document.getElementById('summaryNetBalance');
+            if (netEl) {
+                netEl.innerText = formatCurrency(netBalance);
+                // Tukar warna jika negatif
+                netEl.className = netBalance < 0 
+                    ? "font-bold text-red-600 text-sm" 
+                    : "font-bold text-blue-600 text-sm";
+            }
         }
 
         function toggleContactModal() { document.getElementById('adminContactModal').classList.toggle('hidden'); }
