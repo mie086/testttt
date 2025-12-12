@@ -584,6 +584,26 @@
         </div>
     </div>
 
+    <div id="paymentToast" class="fixed top-5 left-5 z-[110] transform -translate-x-full opacity-0 transition-all duration-700 ease-in-out pointer-events-none">
+        <div class="glass-panel bg-slate-900/90 backdrop-blur-md border border-white/20 text-white p-4 rounded-xl shadow-2xl flex items-start gap-3 w-[280px] relative">
+            
+            <div class="text-yellow-400 shrink-0 animate-pulse">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+    
+            <div>
+                <h4 class="font-bold text-sm text-yellow-100">Peringatan Mesra :</h4>
+                <p class="text-[10px] text-gray-300 leading-tight mt-1">
+                    Sila jelaskan bayaran tabung sebelum tarikh trip. Terima kasih! 🦑
+                </p>
+            </div>
+    
+            <button onclick="closeToast()" class="absolute top-2 right-2 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+        </div>
+    </div>
+
     <script>
         const TARGET_PER_PERSON = 500;
         const DEADLINE = new Date('2026-05-01');
@@ -843,6 +863,29 @@
                     h.querySelector('.fa-chevron-down').classList.toggle('rotate-180');
                 });
             });
+        }
+
+        // --- AUTO POP-UP LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const toast = document.getElementById('paymentToast');
+                if(toast) {
+                    toast.classList.remove('-translate-x-full', 'opacity-0', 'pointer-events-none');
+                    
+                    window.toastTimer = setTimeout(() => {
+                        closeToast();
+                    }, 5000); 
+                }
+            }, 4000); 
+        });
+        
+        function closeToast() {
+            const toast = document.getElementById('paymentToast');
+            if(toast) {
+                toast.classList.add('-translate-x-full', 'opacity-0', 'pointer-events-none');
+                
+                if (window.toastTimer) clearTimeout(window.toastTimer);
+            }
         }
     </script>
 </body>
