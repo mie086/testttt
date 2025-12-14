@@ -1,4 +1,5 @@
         const TARGET_PER_PERSON = 500;
+        const FIXED_TARGET = 5000;
         const DEADLINE = new Date('2026-05-01');
     
         function escapeHtml(text) {
@@ -223,9 +224,15 @@
         function renderTable() {
             const tbody = document.getElementById('memberTableBody');
             tbody.innerHTML = '';
+            
+        
+            const targetDisplay = document.getElementById('totalTargetDisplay');
+            if (targetDisplay) {
+                // Sekarang ia akan baca FIXED_TARGET dari atas tanpa error
+                targetDisplay.innerText = formatCurrency(FIXED_TARGET);
+            }
         
             const sortedMembers = [...members].sort((a,b) => b.paid - a.paid);
-            
             let totalCollected = 0;
             
             sortedMembers.forEach(m => {
@@ -244,7 +251,7 @@
                             </div>
                             <div class="text-[10px] text-gray-400">${Math.round(pct)}%</div>
                         </td>
-                        <td class="p-3 text-center font-mono text-emerald-600 font-bold">${m.paid}</td>
+                        <td class="p-3 text-center font-mono text-emerald-600 font-bold">${formatCurrency(m.paid)}</td>
                         <td class="p-3 text-center">
                             <button onclick="openDetails(${m.id})" class="text-blue-400 hover:text-blue-600">
                                 <i class="fa-solid fa-receipt"></i>
@@ -255,12 +262,15 @@
         
             document.getElementById('tableSummaryCollected').innerText = formatCurrency(totalCollected);
             
-            const globalPct = (totalCollected / (members.length * TARGET_PER_PERSON)) * 100;
+            // Kira peratus guna FIXED_TARGET global
+            const globalPct = (totalCollected / FIXED_TARGET) * 100;
+            
             document.getElementById('tableSummaryProgress').style.width = globalPct + '%';
             
-            updateExpensesSummary(totalCollected);
-            
+            // Update dua kali dalam kod asal anda, saya satukan jadi satu
             document.getElementById('summaryPercentage').innerText = Math.round(globalPct) + '%';
+            
+            updateExpensesSummary(totalCollected);
         }
 
         function openDetails(id) {
