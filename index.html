@@ -2,33 +2,34 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kamus Arab-Melayu Pintar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kamus Pintar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
+    <div class="app-header">
         <header>
             <h1>Kamus Pintar</h1>
-            <p>Carian Pantas & Tepat</p>
+            <p>Arab - Melayu</p>
         </header>
 
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Cari perkataan (contoh: berhampiran)...">
+            <input type="text" id="searchInput" placeholder="Cari perkataan..." autocomplete="off">
         </div>
-
-        <div id="results"></div>
     </div>
 
-    <button id="adminBtn" class="floating-btn">⚙️ Admin</button>
+    <div id="results" class="container"></div>
+
+    <button id="adminBtn" class="floating-btn">⚙️</button>
+
+    </body>
 
     <div id="adminModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            
             <div id="loginSection">
                 <h2>Admin Login</h2>
                 <input type="email" id="email" placeholder="Emel Admin">
@@ -36,51 +37,25 @@
                 <button onclick="handleLogin()" class="action-btn">Masuk</button>
                 <p id="loginError" style="color:red; margin-top:10px;"></p>
             </div>
-
             <div id="dataSection" style="display:none;">
                 <div class="modal-header">
-                    <h2>Tambah Perkataan Baru</h2>
+                    <h2 id="formTitle">Tambah Perkataan</h2>
                     <button onclick="handleLogout()" class="logout-btn">Log Keluar</button>
                 </div>
-                
                 <div class="scrollable-form">
-                    <label>Perkataan Utama (Melayu)</label>
-                    <input type="text" id="newWord" placeholder="Contoh: berhampiran">
-                    
-                    <label>Definisi</label>
-                    <textarea id="newDef" placeholder="Maksud perkataan..."></textarea>
-                    
-                    <label>Jenis Kata (Tag)</label>
-                    <input type="text" id="newType" placeholder="Contoh: Kata Adjektif">
-
+                    <label>Perkataan Utama</label><input type="text" id="newWord">
+                    <label>Definisi</label><textarea id="newDef"></textarea>
+                    <label>Jenis</label><input type="text" id="newType">
                     <hr>
-                    <h3>Data JSON (Details)</h3>
-
-                    <div class="row">
-                        <input type="text" id="newArab" class="arabic-text" placeholder="Ejaan Arab">
-                        <input type="text" id="newTrans" placeholder="Transliterasi (Rumi)">
-                    </div>
-
-                    <label>Makna Lanjutan (HTML dibenarkan)</label>
-                    <textarea id="newMeaningExt" placeholder="Contoh: bermaksud <b>dekat</b>..."></textarea>
-
-                    <label>Nota Tatabahasa</label>
-                    <input type="text" id="newGrammar" placeholder="Nota nahu ringkas">
-
-                    <div class="dynamic-section">
-                        <h4>Struktur Ayat <button onclick="addStructRow()" class="small-btn">+</button></h4>
-                        <div id="structContainer"></div>
-                    </div>
-
-                    <div class="dynamic-section">
-                        <h4>Contoh Ayat <button onclick="addExRow()" class="small-btn">+</button></h4>
-                        <div id="exContainer"></div>
-                    </div>
-
-                    <label>Nota Kaki</label>
-                    <input type="text" id="newFooter" placeholder="Nota tambahan di bawah">
-
-                    <button onclick="submitData()" class="save-btn">Simpan Data</button>
+                    <div class="row"><input type="text" id="newArab" class="arabic-text" placeholder="Arab"><input type="text" id="newTrans" placeholder="Rumi"></div>
+                    <textarea id="newMeaningExt" placeholder="Makna Lanjutan"></textarea>
+                    <input type="text" id="newGrammar" placeholder="Nota Nahu">
+                    
+                    <div class="dynamic-section"><h4>Struktur <button onclick="addStructRow()" class="small-btn">+</button></h4><div id="structContainer"></div></div>
+                    <div class="dynamic-section"><h4>Contoh <button onclick="addExRow()" class="small-btn">+</button></h4><div id="exContainer"></div></div>
+                    
+                    <input type="text" id="newFooter" placeholder="Nota Kaki">
+                    <button onclick="submitData()" class="save-btn">Simpan</button>
                     <p id="statusMsg"></p>
                 </div>
             </div>
