@@ -1,4 +1,6 @@
-// --- CONFIGURATION ---
+/* =========================================
+   1. CONFIGURATION & SETUP
+   ========================================= */
 const SUPABASE_URL = 'https://yqvqtgsbcyudzzvklysk.supabase.co'; 
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxdnF0Z3NiY3l1ZHp6dmtseXNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2ODM2MzQsImV4cCI6MjA4MzI1OTYzNH0.FXH_1ZzesNjuFvwEvMcjqA2MIqWZRhqUegGUGg8pnWI';
 
@@ -8,25 +10,32 @@ const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 // DOM Elements
 const searchInput = document.getElementById('searchInput');
 const resultsDiv = document.getElementById('results');
-let debounceTimer;
-let currentUser = null; // Simpan status login user
-let currentEditId = null; // Simpan ID perkataan yang sedang diedit
 
-// --- AUTO CHECK SESSION BILA LOAD ---
+// State Variables
+let debounceTimer;
+let currentUser = null;   // Status login
+let currentEditId = null; // ID perkataan yang sedang diedit
+
+// Auto Init
 window.addEventListener('DOMContentLoaded', () => {
-    checkSession(); // Check user login dulu
+    checkSession();
     if(searchInput) searchInput.focus();
 });
 
-// --- BAHAGIAN 1: CARIAN ---
 
+/* =========================================
+   2. SEARCH LOGIC (CARIAN)
+   ========================================= */
 searchInput.addEventListener('input', (e) => {
     const keyword = e.target.value.trim();
     clearTimeout(debounceTimer);
+    
     if (keyword.length === 0) {
         resultsDiv.innerHTML = '<div class="no-result" style="text-align:center; color:#888;">Mula menaip untuk mencari...</div>';
         return;
     }
+    
+    // Tunggu 300ms sebelum request (Debounce)
     debounceTimer = setTimeout(() => { fetchWord(keyword); }, 300);
 });
 
@@ -34,20 +43,27 @@ async function fetchWord(keyword) {
     resultsDiv.innerHTML = '<div class="loading" style="text-align:center;">Sedang mencari...</div>';
     try {
         const { data, error } = await _supabase
-            .from('dictionary').select('*')
-            .ilike('word', `${keyword}%`).limit(5)
-            .order('id', { ascending: true }); // Susun ikut ID
+            .from('dictionary')
+            .select('*')
+            .ilike('word', `${keyword}%`)
+            .limit(5)
+            .order('id', { ascending: true });
 
         if (error) throw error;
         displayResults(data);
     } catch (err) {
         console.error(err);
-        resultsDiv.innerHTML = '<div class="no-result">Ralat sambungan.</div>';
+        resultsDiv.innerHTML = '<div class="no-result">Ralat sambungan. Sila cuba lagi.</div>';
     }
 }
 
+
+/* =========================================
+   3. DISPLAY LOGIC (PAPARAN)
+   ========================================= */
 function displayResults(data) {
     resultsDiv.innerHTML = '';
+    
     if (!data || data.length === 0) {
         resultsDiv.innerHTML = '<div class="no-result" style="text-align:center; padding:20px;">Tiada hasil dijumpai.</div>';
         return;
@@ -56,172 +72,158 @@ function displayResults(data) {
     data.forEach(item => {
         const card = document.createElement('div');
         card.className = 'word-card';
-        // Simpan data penuh dalam elemen supaya butang Edit boleh baca nanti
-        card.dataset.json = JSON.stringify(item); 
+        card.dataset.json = JSON.stringify(item); // Simpan data untuk butang Edit
 
-        const details = item.details || {};
-        const arabicText = details.arabic || ''; 
-        const tag = details.tag || item.type || 'Umum';
+        const d = item.details || {};
+        const tag = d.tag || item.type || 'Umum';
 
-        // Butang Admin (Hanya muncul jika user dah login)
-        let adminControls = '';
-        if (currentUser) {
-            adminControls = `
-                <div style="float:right; margin-bottom:10px;">
-                    <button onclick='setupEdit(${JSON.stringify(item).replace(/'/g, "&#39;")})' style="background:#f39c12; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; margin-right:5px;">✏️ Edit</button>
-                    <button onclick="deleteWord(${item.id})" style="background:#c0392b; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">🗑️ Padam</button>
-                </div>
-                <div style="clear:both;"></div>
-            `;
-        }
-
-        // Logic Table Struktur
-        let tableRows = '';
-        if (details.structure && Array.isArray(details.structure)) {
-            details.structure.forEach(row => {
-                tableRows += `<tr><td>${row.komponen}</td><td class="arabic-cell">${row.arab}</td><td><i>${row.sebutan}</i></td><td>${row.fungsi}</td></tr>`;
-            });
-        }
-
-        // Logic Contoh Ayat
-        let examplesHTML = '';
-        if (details.examples && Array.isArray(details.examples)) {
-            examplesHTML += '<h3>2. Contoh Ayat Harian</h3><div class="example-list">';
-            details.examples.forEach((ex, index) => {
-                examplesHTML += `<div class="example-item"><span class="ex-number">${index + 1}.</span><div class="ex-content"><p class="ex-arabic">${ex.arabic}</p><p class="ex-translation">${ex.translation}</p></div></div>`;
-            });
-            examplesHTML += '</div>';
-        }
-
-        // Logic Conclusion (Info Tambahan)
-        let conclusionHTML = '';
-        if (details.conclusion) {
-            const c = details.conclusion;
-            let cRows = '';
-            if (c.table && Array.isArray(c.table)) {
-                c.table.forEach(r => {
-                    cRows += `<tr><td>${r.konteks}</td><td class="arabic-cell">${r.arab}</td><td><i>${r.sebutan}</i></td><td>${r.terjemahan}</td></tr>`;
-                });
-            }
-            conclusionHTML = `
-                <div style="margin-top: 30px; background: #e3f2fd; padding: 15px; border-radius: 8px; border: 1px solid #90caf9;">
-                    <h3 class="section-title" style="border-color:#1976d2; color:#0d47a1;">3. Info Tambahan & Sinonim</h3>
-                    <p style="margin-bottom:15px; line-height:1.6;">${c.intro}</p>
-                    ${cRows ? `<table class="custom-table" style="background:white;"><thead><tr style="background:#bbdefb;"><th>Konteks</th><th>Arab</th><th>Sebutan</th><th>Terjemahan</th></tr></thead><tbody>${cRows}</tbody></table>` : ''}
-                </div>`;
-        }
-
+        // Generate Bahagian-bahagian HTML guna fungsi pembantu
+        const adminBtnHTML  = getAdminButtonsHTML(item);
+        const structureHTML = getStructureHTML(d.structure);
+        const examplesHTML  = getExamplesHTML(d.examples);
+        const conclusionHTML= getConclusionHTML(d.conclusion);
+        
+        // Template Literals (HTML Utama)
         card.innerHTML = `
-            ${adminControls} <div class="word-header-row"><h1 class="main-word">${item.word}</h1><span class="info-tag">${tag}</span></div>
+            ${adminBtnHTML}
+            <div class="word-header-row">
+                <h1 class="main-word">${item.word}</h1>
+                <span class="info-tag">${tag}</span>
+            </div>
             <hr class="divider">
             <div class="detail-section">
-                ${details.transliteration ? `<div class="transliteration-box"><span class="green-dot"></span><span class="arabic-small">${arabicText}</span><br><i class="latin-text">${details.transliteration}</i></div>` : ''}
-                ${details.meaning_extended ? `<p style="margin-top:10px;">${details.meaning_extended}</p>` : ''}
-                ${details.grammar_note ? `<p style="background:#fff3e0; padding:8px; border-radius:5px; font-size:0.9em;">💡 ${details.grammar_note}</p>` : ''}
-                ${tableRows ? `<h3>1. Struktur & Makna</h3><table class="custom-table"><thead><tr><th>Komponen</th><th>Arab</th><th>Sebutan</th><th>Fungsi/Makna</th></tr></thead><tbody>${tableRows}</tbody></table>` : ''}
+                
+                ${(d.arabic || d.transliteration || d.meaning_extended) ? `
+                    <div class="unified-meaning-box">
+                        
+                        <div class="umb-header">
+                            ${d.arabic ? `<span class="arabic-small">${d.arabic}</span>` : ''}
+                            ${d.transliteration ? `<i class="latin-text" style="color:#666;">${d.transliteration}</i>` : ''}
+                        </div>
+            
+                        ${d.meaning_extended ? `
+                            <div class="umb-body">
+                                ${d.meaning_extended}
+                            </div>
+                        ` : ''}
+                        
+                    </div>
+                ` : ''}
+
+                ${d.grammar_note ? `<p style="background:#fff3e0; padding:10px; border-radius:6px; font-size:0.95em; margin-top:10px;">💡 <b>Info Nahu:</b> ${d.grammar_note}</p>` : ''}
+                
+                ${structureHTML}
                 ${examplesHTML}
                 ${conclusionHTML}
-                ${details.footer_note ? `<div class="footer-note" style="margin-top:15px; font-style:italic; border-left:3px solid #ccc; padding-left:10px; color:#666;">${details.footer_note}</div>` : ''}
+                
+                ${d.footer_note ? `<div class="footer-note" style="margin-top:15px; font-style:italic; border-left:3px solid #ccc; padding-left:10px; color:#666;">${d.footer_note}</div>` : ''}
             </div>
         `;
         resultsDiv.appendChild(card);
     });
 }
 
-// --- BAHAGIAN 2: ADMIN LOGIC ---
+// --- Display Helpers (Supaya kod utama tak serabut) ---
 
+function getAdminButtonsHTML(item) {
+    if (!currentUser) return '';
+    // Encode JSON supaya selamat dimasukkan dalam onclick
+    const safeItem = JSON.stringify(item).replace(/'/g, "&#39;");
+    return `
+        <div class="admin-controls" style="float:right; margin-bottom:10px;">
+            <button onclick='setupEdit(${safeItem})' style="background:#f39c12; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; margin-right:5px;">✏️ Edit</button>
+            <button onclick="deleteWord(${item.id})" style="background:#c0392b; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">🗑️ Padam</button>
+        </div>
+        <div style="clear:both;"></div>
+    `;
+}
+
+function getStructureHTML(structure) {
+    if (!structure || !Array.isArray(structure) || structure.length === 0) return '';
+    
+    let rows = structure.map(row => 
+        `<tr>
+            <td>${row.komponen}</td>
+            <td class="arabic-cell">${row.arab}</td>
+            <td><i>${row.sebutan}</i></td>
+            <td>${row.fungsi}</td>
+        </tr>`
+    ).join('');
+
+    return `<h3>1. Struktur & Makna</h3>
+            <table class="custom-table">
+                <thead><tr><th>Komponen</th><th>Arab</th><th>Sebutan</th><th>Fungsi/Makna</th></tr></thead>
+                <tbody>${rows}</tbody>
+            </table>`;
+}
+
+function getExamplesHTML(examples) {
+    if (!examples || !Array.isArray(examples) || examples.length === 0) return '';
+    
+    let list = examples.map((ex, idx) => 
+        `<div class="example-item">
+            <span class="ex-number">${idx + 1}.</span>
+            <div class="ex-content">
+                <p class="ex-arabic">${ex.arabic}</p>
+                <p class="ex-translation">${ex.translation}</p>
+            </div>
+        </div>`
+    ).join('');
+
+    return `<h3>2. Contoh Ayat Harian</h3><div class="example-list">${list}</div>`;
+}
+
+function getConclusionHTML(conclusion) {
+    if (!conclusion) return '';
+    
+    let tableRows = '';
+    if (conclusion.table && Array.isArray(conclusion.table)) {
+        tableRows = conclusion.table.map(r => 
+            `<tr>
+                <td>${r.konteks}</td>
+                <td class="arabic-cell">${r.arab}</td>
+                <td><i>${r.sebutan}</i></td>
+                <td>${r.terjemahan}</td>
+            </tr>`
+        ).join('');
+    }
+
+    return `
+        <div class="info-box">
+            <h3 class="section-title">3. Info Tambahan & Sinonim</h3>
+            <p class="info-intro">${conclusion.intro || ''}</p>
+            ${tableRows ? `
+                <table class="custom-table table-blue-header" style="background:white;">
+                    <thead><tr><th>Konteks</th><th>Arab</th><th>Sebutan</th><th>Terjemahan</th></tr></thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+            ` : ''}
+        </div>`;
+}
+
+
+/* =========================================
+   4. ADMIN MODAL & AUTH LOGIC
+   ========================================= */
 const modal = document.getElementById("adminModal");
 const btn = document.getElementById("adminBtn");
-const span = document.getElementsByClassName("close-btn")[0];
+const span = document.querySelector(".close-btn");
 const loginSection = document.getElementById("loginSection");
 const dataSection = document.getElementById("dataSection");
 
-// Buka Modal (Mode Tambah Baru)
-btn.onclick = function() {
-    resetForm(); // Ini dah cukup untuk reset tajuk
-    currentEditId = null; 
-    // Baris bermasalah tadi dah dibuang
+// Event Listeners Modal
+btn.onclick = () => {
+    resetForm();
     modal.style.display = "block";
     checkSession();
-}
+};
+span.onclick = () => modal.style.display = "none";
+window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
 
-// Tutup Modal
-span.onclick = function() { modal.style.display = "none"; }
-window.onclick = function(event) { if (event.target == modal) modal.style.display = "none"; }
-
-// Fungsi Setup Edit (Dipanggil bila butang Edit ditekan)
-function setupEdit(item) {
-    console.log("Editing:", item);
-    currentEditId = item.id; // Set ID untuk update nanti
-    
-    // Buka Modal
-    modal.style.display = "block";
-    checkSession();
-
-    // Tukar tajuk modal
-    const titleEl = document.querySelector("#dataSection h2");
-    if(titleEl) titleEl.innerText = `Edit: ${item.word}`;
-    else document.getElementById('dataSection').insertAdjacentHTML('afterbegin', `<h2 id="formTitle">Edit: ${item.word}</h2>`);
-
-    // Isi semula borang dengan data dari database
-    document.getElementById('newWord').value = item.word;
-    document.getElementById('newDef').value = item.definition;
-    document.getElementById('newType').value = item.type || (item.details?.tag || '');
-
-    const d = item.details || {};
-    document.getElementById('newArab').value = d.arabic || '';
-    document.getElementById('newTrans').value = d.transliteration || '';
-    document.getElementById('newMeaningExt').value = d.meaning_extended || '';
-    document.getElementById('newGrammar').value = d.grammar_note || '';
-    document.getElementById('newFooter').value = d.footer_note || '';
-
-    // Isi Struktur (Clear dulu, lepas tu tambah row satu per satu)
-    document.getElementById('structContainer').innerHTML = '';
-    if (d.structure && Array.isArray(d.structure)) {
-        d.structure.forEach(row => {
-            addStructRow(row.komponen, row.arab, row.sebutan, row.fungsi);
-        });
-    }
-
-    // Isi Contoh (Clear dulu, lepas tu tambah)
-    document.getElementById('exContainer').innerHTML = '';
-    if (d.examples && Array.isArray(d.examples)) {
-        d.examples.forEach(ex => {
-            addExRow(ex.arabic, ex.translation);
-        });
-    }
-}
-
-// Fungsi Padam
-async function deleteWord(id) {
-    if(!confirm("Anda pasti mahu memadam perkataan ini?")) return;
-
-    try {
-        const { error } = await _supabase.from('dictionary').delete().eq('id', id);
-        if (error) throw error;
-        alert("Berjaya dipadam!");
-        // Refresh carian
-        const currentKeyword = searchInput.value.trim();
-        if(currentKeyword) fetchWord(currentKeyword);
-    } catch (err) {
-        alert("Gagal padam: " + err.message);
-    }
-}
-
-// Helper: Kosongkan Form
-function resetForm() {
-    currentEditId = null;
-    document.querySelectorAll('#dataSection input, #dataSection textarea').forEach(i => i.value = '');
-    document.getElementById('structContainer').innerHTML = '';
-    document.getElementById('exContainer').innerHTML = '';
-    const titleEl = document.querySelector("#dataSection h2");
-    if(titleEl) titleEl.innerText = "Tambah Perkataan Baru";
-}
-
-// Check Session & Update UI
+// Auth Functions
 async function checkSession() {
     const { data: { session } } = await _supabase.auth.getSession();
-    currentUser = session; // Simpan dalam global var
+    currentUser = session;
     
     if (session) {
         loginSection.style.display = "none";
@@ -232,18 +234,18 @@ async function checkSession() {
     }
 }
 
-// Login & Logout
 async function handleLogin() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const errText = document.getElementById('loginError');
+    
     errText.textContent = "Sedang log masuk...";
     try {
         const { error } = await _supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        checkSession(); 
+        checkSession();
         errText.textContent = "";
-        // Refresh results jika ada carian terpapar supaya butang Edit muncul
+        // Refresh carian kalau ada
         if(searchInput.value.trim()) fetchWord(searchInput.value.trim());
     } catch (err) {
         errText.textContent = "Gagal: " + err.message;
@@ -253,72 +255,120 @@ async function handleLogin() {
 async function handleLogout() {
     await _supabase.auth.signOut();
     checkSession();
-    resultsDiv.innerHTML = ''; // Clear result untuk keselamatan
+    resultsDiv.innerHTML = '';
 }
 
-// Dynamic Rows (Modified untuk terima value)
-function addStructRow(k='', a='', s='', f='') {
-    const div = document.createElement('div');
-    div.className = 'dynamic-row';
-    div.innerHTML = `<input placeholder="Komp" class="s-comp" value="${k}"><input placeholder="Arab" class="s-arab arabic-text" value="${a}"><input placeholder="Bunyi" class="s-sound" value="${s}"><input placeholder="Fungsi" class="s-func" value="${f}"><button type="button" onclick="this.parentElement.remove()" style="background:red;color:white;border:none;border-radius:4px;">X</button>`;
-    document.getElementById('structContainer').appendChild(div);
+
+/* =========================================
+   5. CRUD OPERATIONS (CREATE, UPDATE, DELETE)
+   ========================================= */
+
+// --- A. Setup Form untuk Edit ---
+function setupEdit(item) {
+    currentEditId = item.id;
+    modal.style.display = "block";
+    checkSession();
+
+    // UI Updates
+    const titleEl = document.querySelector("#dataSection h2");
+    if(titleEl) titleEl.innerText = `Edit: ${item.word}`;
+    
+    // Populate Fields
+    document.getElementById('newWord').value = item.word;
+    // [BARIS 'newDef' TELAH DIBUANG DI SINI] 
+    document.getElementById('newType').value = item.type || (item.details?.tag || '');
+
+    const d = item.details || {};
+    document.getElementById('newArab').value = d.arabic || '';
+    document.getElementById('newTrans').value = d.transliteration || '';
+    document.getElementById('newMeaningExt').value = d.meaning_extended || '';
+    document.getElementById('newGrammar').value = d.grammar_note || '';
+
+    // Populate Dynamic Tables (Struktur, Contoh, Conclusion...)
+    document.getElementById('structContainer').innerHTML = '';
+    if (d.structure) d.structure.forEach(r => addStructRow(r.komponen, r.arab, r.sebutan, r.fungsi));
+
+    document.getElementById('exContainer').innerHTML = '';
+    if (d.examples) d.examples.forEach(e => addExRow(e.arabic, e.translation));
+
+    document.getElementById('concContainer').innerHTML = '';
+    const c = d.conclusion || {};
+    document.getElementById('newConcIntro').value = c.intro || '';
+    if (c.table) c.table.forEach(r => addConcRow(r.konteks, r.arab, r.sebutan, r.terjemahan));
 }
 
-function addExRow(a='', t='') {
-    const div = document.createElement('div');
-    div.className = 'dynamic-row';
-    div.innerHTML = `<input placeholder="Ayat Arab" class="ex-arab arabic-text" value="${a}"><input placeholder="Terjemahan" class="ex-trans" value="${t}"><button type="button" onclick="this.parentElement.remove()" style="background:red;color:white;border:none;border-radius:4px;">X</button>`;
-    document.getElementById('exContainer').appendChild(div);
+// --- B. Reset Form ---
+function resetForm() {
+    currentEditId = null;
+    document.querySelectorAll('#dataSection input, #dataSection textarea').forEach(i => i.value = '');
+    document.getElementById('structContainer').innerHTML = '';
+    document.getElementById('exContainer').innerHTML = '';
+    document.getElementById('concContainer').innerHTML = ''; // Reset container baru
+    
+    const titleEl = document.querySelector("#dataSection h2");
+    if(titleEl) titleEl.innerText = "Tambah Perkataan Baru";
 }
 
-// Handle Submit (INSERT atau UPDATE)
+// --- C. Submit Data (Insert/Update) ---
 async function submitData() {
     const msg = document.getElementById('statusMsg');
     msg.textContent = "Menyimpan...";
     msg.style.color = "blue";
 
-    // Kumpul Data
-    const sRows = document.querySelectorAll('#structContainer .dynamic-row');
-    const structData = Array.from(sRows).map(r => ({
+    // 1. Kumpul Data Dynamic Rows
+    const structData = Array.from(document.querySelectorAll('#structContainer .dynamic-row')).map(r => ({
         komponen: r.querySelector('.s-comp').value,
         arab: r.querySelector('.s-arab').value,
         sebutan: r.querySelector('.s-sound').value,
         fungsi: r.querySelector('.s-func').value
     }));
 
-    const eRows = document.querySelectorAll('#exContainer .dynamic-row');
-    const exData = Array.from(eRows).map(r => ({
+    const exData = Array.from(document.querySelectorAll('#exContainer .dynamic-row')).map(r => ({
         arabic: r.querySelector('.ex-arab').value,
         translation: r.querySelector('.ex-trans').value
     }));
 
+    const concData = Array.from(document.querySelectorAll('#concContainer .dynamic-row')).map(r => ({
+        konteks: r.querySelector('.c-context').value,
+        arab: r.querySelector('.c-arab').value,
+        sebutan: r.querySelector('.c-sound').value,
+        terjemahan: r.querySelector('.c-trans').value
+    }));
+
+    // 2. Bina JSON Object
     const detailsJSON = {
         arabic: document.getElementById('newArab').value,
         tag: document.getElementById('newType').value,
         transliteration: document.getElementById('newTrans').value,
         meaning_extended: document.getElementById('newMeaningExt').value,
         grammar_note: document.getElementById('newGrammar').value,
-        footer_note: document.getElementById('newFooter').value,
+        
+        footer_note: "", 
+
         structure: structData,
-        examples: exData
+        examples: exData,
+        conclusion: { 
+            intro: document.getElementById('newConcIntro').value,
+            table: concData
+        }
     };
 
+    // 3. Payload ke Database
     const payload = {
         word: document.getElementById('newWord').value,
-        definition: document.getElementById('newDef').value,
+        
+        definition: "-", 
+        
         type: document.getElementById('newType').value,
         details: detailsJSON
     };
 
     try {
         let error;
-        
         if (currentEditId) {
-            // MODE UPDATE: Jika ada ID, kita update row tersebut
             const res = await _supabase.from('dictionary').update(payload).eq('id', currentEditId);
             error = res.error;
         } else {
-            // MODE INSERT: Jika tiada ID, kita buat baru
             const res = await _supabase.from('dictionary').insert([payload]);
             error = res.error;
         }
@@ -331,7 +381,6 @@ async function submitData() {
         setTimeout(() => { 
             msg.textContent = ""; 
             modal.style.display = "none"; 
-            // Refresh carian supaya nampak perubahan
             const key = searchInput.value.trim();
             if(key) fetchWord(key);
         }, 1500);
@@ -340,4 +389,83 @@ async function submitData() {
         msg.textContent = "❌ Error: " + err.message;
         msg.style.color = "red";
     }
+}
+
+// --- D. Delete Data ---
+async function deleteWord(id) {
+    if(!confirm("Anda pasti mahu memadam perkataan ini?")) return;
+    try {
+        const { error } = await _supabase.from('dictionary').delete().eq('id', id);
+        if (error) throw error;
+        alert("Berjaya dipadam!");
+        const currentKeyword = searchInput.value.trim();
+        if(currentKeyword) fetchWord(currentKeyword);
+    } catch (err) {
+        alert("Gagal padam: " + err.message);
+    }
+}
+
+
+/* =========================================
+   6. DYNAMIC ROWS FUNCTIONS
+   ========================================= */
+
+function addStructRow(k='', a='', s='', f='') {
+    createRow('structContainer', `
+        <input placeholder="Komp" class="s-comp" value="${k}">
+        <input placeholder="Arab" class="s-arab arabic-text" value="${a}">
+        <input placeholder="Bunyi" class="s-sound" value="${s}">
+        <input placeholder="Fungsi" class="s-func" value="${f}">
+    `);
+}
+
+function addExRow(a='', t='') {
+    createRow('exContainer', `
+        <input placeholder="Ayat Arab" class="ex-arab arabic-text" value="${a}">
+        <input placeholder="Terjemahan" class="ex-trans" value="${t}">
+    `);
+}
+
+function addConcRow(k='', a='', s='', t='') {
+    createRow('concContainer', `
+        <input placeholder="Konteks" class="c-context" value="${k}">
+        <input placeholder="Arab" class="c-arab arabic-text" value="${a}">
+        <input placeholder="Sebutan" class="c-sound" value="${s}">
+        <input placeholder="Terjemahan" class="c-trans" value="${t}">
+    `);
+}
+
+// Helper untuk elak tulis kod berulang
+function createRow(containerId, innerHTML) {
+    const div = document.createElement('div');
+    div.className = 'dynamic-row';
+    // Tambah butang buang (X) secara automatik
+    div.innerHTML = innerHTML + `<button type="button" onclick="this.parentElement.remove()" style="background:red;color:white;border:none;border-radius:4px; margin-left:5px;">X</button>`;
+    
+    const container = document.getElementById(containerId);
+    if (container) container.appendChild(div);
+}
+
+// --- FUNGSI EDITOR TOOLS ---
+function insertTag(startTag, endTag) {
+    const textarea = document.getElementById('newMeaningExt');
+    
+    // Cari posisi kursor
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    
+    // Ambil teks sedia ada
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+    
+    // Masukkan tag di sekeliling teks yang dipilih (atau di kursor)
+    const replacement = startTag + selectedText + endTag;
+    
+    textarea.value = text.substring(0, start) + replacement + text.substring(end);
+    
+    // Letak fokus balik ke textarea
+    textarea.focus();
+    
+    // Alihkan kursor ke tengah tag (jika tiada teks dipilih)
+    textarea.selectionEnd = start + startTag.length + selectedText.length + endTag.length;
 }
