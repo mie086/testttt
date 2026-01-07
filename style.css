@@ -175,3 +175,223 @@ input:focus, textarea:focus { border-color: #1a73e8; outline: none; }
     font-size: 0.9rem !important;
     margin-left: 5px;
 }
+
+/* --- INFO TAMBAHAN (CONCLUSION) STYLES --- */
+
+/* Kotak Biru Utama */
+.info-box {
+    margin-top: 30px;
+    background-color: #e3f2fd; /* Biru sangat cair */
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #90caf9; /* Garis biru lembut */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Tajuk Seksyen Biru */
+.info-box h3.section-title {
+    color: #0d47a1; /* Biru gelap */
+    border-bottom: 2px solid #1976d2; /* Garis bawah biru pekat */
+    margin-top: 0; /* Reset margin atas sebab dah ada padding kotak */
+}
+
+/* Teks Pengenalan */
+.info-intro {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    color: #37474f; /* Warna teks gelap sedikit untuk kontras */
+}
+
+/* Header Jadual Biru */
+.table-blue-header thead tr {
+    background-color: #bbdefb !important; /* Latar belakang header biru cair */
+}
+.table-blue-header th {
+    color: #0d47a1; /* Tulisan header biru gelap */
+}
+
+.rich-editor-container {
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    overflow: hidden; /* Supaya bucu bulat tak terkeluar */
+    transition: all 0.3s ease;
+}
+
+/* Bila user klik kotak ini, ia jadi biru (active) */
+.rich-editor-container:focus-within {
+    border-color: #1976d2;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+}
+
+/* Toolbar di atas */
+.editor-toolbar {
+    background: #f1f3f4;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Butang Toolbar (B, I, Enter) */
+.editor-toolbar button {
+    background: white;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    color: #5f6368;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.editor-toolbar button:hover {
+    background: #e8f0fe;
+    color: #1967d2;
+    border-color: #1976d2;
+}
+
+.toolbar-label {
+    margin-left: auto; /* Tolak label ke kanan */
+    font-size: 0.75rem;
+    color: #9aa0a6;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Textarea itu sendiri */
+.editor-textarea {
+    width: 100%;
+    border: none; /* Buang border asal textarea */
+    padding: 15px;
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+    color: #37474f;
+    outline: none; /* Buang outline biru default browser */
+    resize: vertical; /* Benarkan tarik tinggi */
+    min-height: 100px;
+    background: transparent;
+    line-height: 1.6;
+}
+
+/* Garis bawah hiasan */
+.editor-footer-line {
+    height: 3px;
+    background: linear-gradient(90deg, #1976d2, #42a5f5);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* Garis bawah memanjang bila fokus */
+.rich-editor-container:focus-within .editor-footer-line {
+    width: 100%;
+}
+
+/* --- LINGUISTIC BOX (Gabungan Arab, Rumi & Makna) --- */
+
+.linguistic-box {
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Bila fokus, garisan biru menyala */
+.linguistic-box:focus-within {
+    border-color: #1976d2;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+}
+
+/* --- Baris Atas (Arab & Rumi) --- */
+.top-row {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    background: #fafafa;
+}
+
+/* Input Arab & Rumi */
+.top-row input {
+    flex: 1; /* Bahagi ruang sama rata (50-50) */
+    border: none;
+    padding: 15px;
+    background: transparent;
+    margin: 0; /* Buang margin default */
+    border-radius: 0; /* Buang bucu bulat */
+    outline: none;
+}
+
+.top-row input:focus {
+    background: #fff; /* Jadi putih bila klik */
+}
+
+/* Garis Pemisah Tengah (Antara Arab & Rumi) */
+.vertical-line {
+    width: 1px;
+    background: #e0e0e0;
+}
+
+/* --- Toolbar (Kekal macam sebelum ini, cuma adjust border) --- */
+.editor-toolbar {
+    background: #f1f3f4;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e0e0e0; /* Garis pemisah dengan textarea */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Pastikan textarea tiada border extra */
+.editor-textarea {
+    border: none;
+    outline: none;
+    width: 100%;
+    padding: 15px;
+    min-height: 100px;
+    resize: vertical;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* --- UNIFIED DISPLAY BOX (Paparan Hasil Carian) --- */
+
+.unified-meaning-box {
+    border: 1px solid #e0e0e0;       /* Garis nipis keliling */
+    border-left: 5px solid #1976d2;  /* Garis TEBAL BIRU di kiri (Identiti) */
+    border-radius: 8px;
+    background: #fff;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Bayang lembut */
+    overflow: hidden;
+}
+
+/* Bahagian Atas: Arab & Rumi */
+.umb-header {
+    background: #f8f9fa; /* Latar kelabu sangat cair */
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Tulisan Arab dalam kotak */
+.umb-header .arabic-small {
+    display: block;
+    font-size: 1.8rem; /* Besar dan jelas */
+    color: #000;
+    margin-bottom: 5px;
+}
+
+/* Bahagian Bawah: Makna */
+.umb-body {
+    padding: 20px;
+    font-size: 1.05rem;
+    color: #37474f;
+    line-height: 1.7; /* Jarak baris selesa dibaca */
+}
