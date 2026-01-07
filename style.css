@@ -1,81 +1,177 @@
-/* Reset & Base */
-body { font-family: 'Noto Sans', sans-serif; background: #f4f6f8; margin: 0; padding: 20px; color: #333; }
-.container { max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
-h1, h2, h3, h4 { margin: 0 0 10px; }
-
-/* Typography Khas */
-.arabic-text, .arabic-small, .arabic-cell, .ex-arabic {
-    font-family: 'Amiri', serif;
-    direction: rtl;
+/* 1. Base Setup */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5; /* Warna latar kelabu cair Android */
+    margin: 0;
+    padding: 0;
+    color: #212121;
+    padding-bottom: 80px; /* Ruang untuk scroll habis ke bawah */
 }
 
-/* Header & Search */
-header { text-align: center; margin-bottom: 30px; }
-.search-box input {
-    width: 100%; padding: 15px; border-radius: 30px; border: 1px solid #ddd;
-    font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); outline: none;
-    box-sizing: border-box;
-}
-.search-box input:focus { border-color: #4CAF50; }
-
-/* Results Card */
-.word-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-.word-header-row { display: flex; justify-content: space-between; align-items: center; }
-.main-word { color: #2c3e50; font-size: 1.5em; text-transform: capitalize; }
-.info-tag { background: #e8f5e9; color: #2e7d32; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; }
-.divider { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
-
-/* Details Styling */
-.transliteration-box { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: inline-block; }
-.green-dot { display: inline-block; width: 8px; height: 8px; background: #4CAF50; border-radius: 50%; margin-right: 5px; }
-.arabic-small { font-size: 1.4em; font-weight: bold; color: #000; }
-.latin-text { display: block; color: #666; font-size: 0.9em; margin-top: 4px; }
-
-/* Table Styling */
-.custom-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; }
-.custom-table th { text-align: left; background: #f0f0f0; padding: 8px; }
-.custom-table td { border-bottom: 1px solid #eee; padding: 8px; }
-.arabic-cell { font-size: 1.2em; font-weight: bold; text-align: right; }
-
-/* Examples Styling */
-.section-title { font-size: 1.1em; color: #555; border-bottom: 2px solid #4CAF50; display: inline-block; padding-bottom: 3px; }
-.example-item { display: flex; gap: 10px; margin-bottom: 15px; align-items: flex-start; }
-.ex-number { font-weight: bold; color: #999; }
-.ex-arabic { font-size: 1.3em; margin: 0; color: #000; font-weight: 500; }
-.ex-translation { margin: 2px 0 0; color: #555; font-style: italic; }
-
-/* --- ADMIN MODAL & FORM --- */
-.floating-btn {
-    position: fixed; bottom: 20px; right: 20px; background: #2c3e50; color: white;
-    border: none; padding: 12px 20px; border-radius: 30px; cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-weight: bold; z-index: 1000;
-}
-.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-.modal-content {
-    background-color: white; margin: 5% auto; padding: 20px; border-radius: 10px;
-    width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; position: relative;
-}
-.close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-.close-btn:hover { color: black; }
-
-/* Form Elements */
-input, textarea { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-.row { display: flex; gap: 10px; }
-.action-btn, .save-btn { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-.logout-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; float: right; }
-.small-btn { background: #3498db; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer; margin-left: 10px; }
-
-/* Dynamic Rows */
-.dynamic-row { display: flex; gap: 5px; margin-bottom: 5px; }
-.dynamic-row input { margin: 0; flex: 1; }
-
-/* Jarak untuk tajuk dalam kad (seperti 1. Struktur & Makna) */
-.detail-section h3 {
-    margin-top: 35px;    /* Jarak dari elemen ATAS (tambah nilai ini untuk jarakkan lagi) */
-    margin-bottom: 15px; /* Jarak dari elemen BAWAH (table) */
+/* 2. App Header (Sticky) */
+.app-header {
+    background: #ffffff;
+    padding: 15px 20px 15px;
     
-    /* Pilihan: Kalau nak tajuk tu ada garis bawah macam tajuk no.2 & 3 */
-    border-bottom: 2px solid #4CAF50; 
-    display: inline-block;
-    padding-bottom: 5px;
+    /* Kita tukar 'sticky' kepada 'relative' supaya ia ikut scroll */
+    position: relative; 
+    
+    /* Buang 'top: 0' dan 'z-index' sebab dah tak perlu */
+    
+    /* Bayang nipis supaya nampak pemisah dengan isi kandungan */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); 
+}
+
+h1 {
+    font-size: 1.4rem;
+    margin: 0 0 5px 0;
+    color: #1a73e8; /* Google Blue */
+    text-align: center;
+}
+p { margin: 0; text-align: center; font-size: 0.9rem; color: #757575; }
+
+/* 3. Search Bar (Material Style) */
+.search-box {
+    margin-top: 10px;
+    position: relative;
+}
+.search-box input {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 1px solid #dadce0;
+    background: #f1f3f4;
+    font-size: 16px; /* Saiz standard mobile supaya tak zoom */
+    outline: none;
+    transition: all 0.3s;
+}
+.search-box input:focus {
+    background: #ffffff;
+    box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+    border-color: transparent;
+}
+
+/* 4. Results Container */
+#results { padding: 15px; }
+.no-result { text-align: center; margin-top: 50px; color: #9aa0a6; }
+
+/* 5. Card Design (Android CardView) */
+.word-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: transform 0.2s;
+}
+.word-card:active { transform: scale(0.98); } /* Efek tekan */
+
+.word-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.main-word {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #202124;
+    margin: 0;
+}
+.info-tag {
+    background: #e8f0fe;
+    color: #1967d2;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+/* Divider & Typography */
+.divider { border: 0; border-top: 1px solid #f1f3f4; margin: 15px 0; }
+.arabic-text, .arabic-small, .arabic-cell, .ex-arabic { font-family: 'Amiri', serif; direction: rtl; }
+.arabic-small { font-size: 1.6rem; color: #000; line-height: 1.4; }
+.transliteration-box { background: #f8f9fa; padding: 12px; border-radius: 8px; border-left: 4px solid #1a73e8; }
+.latin-text { color: #5f6368; font-size: 1rem; display: block; margin-top: 5px; }
+
+/* 6. Tables & Content */
+.custom-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+.custom-table th { text-align: left; color: #5f6368; font-weight: 500; padding: 8px 4px; border-bottom: 2px solid #f1f3f4; }
+.custom-table td { padding: 10px 4px; border-bottom: 1px solid #f1f3f4; color: #3c4043; vertical-align: middle; }
+.arabic-cell { font-size: 1.3rem; font-weight: bold; text-align: right; }
+
+.detail-section h3 {
+    margin-top: 30px; margin-bottom: 15px;
+    font-size: 1.1rem; color: #1a73e8;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+/* 7. Floating Action Button (FAB) - Butang Admin */
+.floating-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.14), 0 1px 18px rgba(0,0,0,0.12);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: background 0.3s;
+}
+.floating-btn:active { background-color: #174ea6; }
+
+/* 8. Full Screen Modal (Untuk Mobile) */
+.modal {
+    display: none; position: fixed; z-index: 2000;
+    left: 0; top: 0; width: 100%; height: 100%;
+    background-color: #fff; /* Full white screen */
+    animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.modal-content {
+    width: 100%; height: 100%;
+    margin: 0; padding: 20px;
+    border-radius: 0;
+    overflow-y: auto;
+    background: #fff;
+    box-shadow: none;
+}
+.close-btn { 
+    font-size: 35px; color: #333; 
+    position: absolute; top: 15px; right: 20px; 
+    z-index: 2010; 
+}
+
+/* Form Styles dalam Modal */
+input, textarea {
+    width: 100%; padding: 15px; margin-bottom: 15px;
+    border: 1px solid #dadce0; border-radius: 8px;
+    font-size: 16px; background: #fff;
+}
+input:focus, textarea:focus { border-color: #1a73e8; outline: none; }
+.action-btn, .save-btn {
+    width: 100%; padding: 15px; background: #1a73e8;
+    color: white; font-weight: bold; border-radius: 25px;
+    border: none; font-size: 16px; margin-top: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.logout-btn { background: #d93025; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; }
+
+/* Button Edit/Delete dalam Kad */
+.admin-controls button {
+    padding: 8px 16px !important;
+    font-size: 0.9rem !important;
+    margin-left: 5px;
 }
