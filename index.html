@@ -44,17 +44,57 @@
                 </div>
                 <div class="scrollable-form">
                     <label>Perkataan Utama</label><input type="text" id="newWord">
-                    <label>Definisi</label><textarea id="newDef"></textarea>
                     <label>Jenis</label><input type="text" id="newType">
                     <hr>
-                    <div class="row"><input type="text" id="newArab" class="arabic-text" placeholder="Arab"><input type="text" id="newTrans" placeholder="Rumi"></div>
-                    <textarea id="newMeaningExt" placeholder="Makna Lanjutan"></textarea>
-                    <input type="text" id="newGrammar" placeholder="Nota Nahu">
+                    <label>Data Bahasa & Makna</label>
+                    <div class="linguistic-box">
+                        
+                        <div class="top-row">
+                            <input type="text" id="newArab" class="arabic-text" placeholder="Ejaan Arab (contoh: مَكَانٌ)">
+                            <div class="vertical-line"></div>
+                            <input type="text" id="newTrans" placeholder="Ejaan Rumi (contoh: makānun)">
+                        </div>
                     
-                    <div class="dynamic-section"><h4>Struktur <button onclick="addStructRow()" class="small-btn">+</button></h4><div id="structContainer"></div></div>
-                    <div class="dynamic-section"><h4>Contoh <button onclick="addExRow()" class="small-btn">+</button></h4><div id="exContainer"></div></div>
+                        <div class="editor-toolbar">
+                            <button type="button" onclick="insertTag('<b>', '</b>')" title="Bold (Tebal)"><b>B</b></button>
+                            <button type="button" onclick="insertTag('<i>', '</i>')" title="Italic (Condong)"><i>I</i></button>
+                            <button type="button" onclick="insertTag('<br>', '')" title="Baris Baru">↵ Enter</button>
+                            <span class="toolbar-label">Huraian Makna</span>
+                        </div>
                     
-                    <input type="text" id="newFooter" placeholder="Nota Kaki">
+                        <textarea id="newMeaningExt" class="editor-textarea" placeholder="Tulis huraian makna di sini... Contoh: bermaksud <b>dekat</b>..." rows="4"></textarea>
+                    
+                        <div class="editor-footer-line"></div>
+                    </div>
+                    <input type="text" id="newGrammar" placeholder="Nota">
+                    
+                    <hr class="divider">
+                    <h3>1. Struktur & Makna</h3>
+                    <div class="dynamic-section">
+                        <h4>Jadual Struktur <button onclick="addStructRow()" class="small-btn" style="background:#1976d2;">+</button></h4>
+                        <div id="structContainer">
+                            </div>
+                    </div>
+                    
+                    <hr class="divider">
+                    <h3>2. Contoh Ayat Harian</h3>
+                    <div class="dynamic-section">
+                        <h4>Senarai Contoh <button onclick="addExRow()" class="small-btn" style="background:#1976d2;">+</button></h4>
+                        <div id="exContainer">
+                            </div>
+                    </div>
+                    
+                    <hr class="divider">
+                    <h3>3. Info Tambahan & Kesimpulan</h3>
+                    <label>Pengenalan (Intro)</label>
+                    <textarea id="newConcIntro" placeholder="Contoh: Perkataan ini berasal daripada... (HTML dibenarkan)" rows="3"></textarea>
+                    
+                    <div class="dynamic-section">
+                        <h4>Jadual Tambahan <button onclick="addConcRow()" class="small-btn" style="background:#1976d2;">+</button></h4>
+                        <div id="concContainer">
+                            </div>
+                    </div>
+                    
                     <button onclick="submitData()" class="save-btn">Simpan</button>
                     <p id="statusMsg"></p>
                 </div>
