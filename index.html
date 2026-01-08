@@ -24,7 +24,7 @@
                 </header>
             
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Cari perkataan..." autocomplete="off">
+                    <input type="search" name="q" id="searchInput" placeholder="Cari perkataan..." autocomplete="off">
                 </div>
             </div>
             
@@ -38,9 +38,13 @@
                 
                 <div id="loginSection">
                     <h2>Admin Login</h2>
-                    <input type="email" id="email" placeholder="Emel Admin">
-                    <input type="password" id="password" placeholder="Kata Laluan">
-                    <button onclick="handleLogin()" class="action-btn">Masuk</button>
+                    <form onsubmit="event.preventDefault(); handleLogin();">
+                        <input type="email" id="email" name="email" placeholder="Emel Admin" autocomplete="username">
+                        
+                        <input type="password" id="password" name="password" placeholder="Kata Laluan" autocomplete="current-password">
+                        
+                        <button type="submit" class="action-btn">Masuk</button>
+                    </form>
                     <p id="loginError" style="color:red; margin-top:10px;"></p>
                 </div>
 
