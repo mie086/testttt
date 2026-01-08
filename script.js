@@ -211,7 +211,7 @@ function getConclusionHTML(conclusion) {
                             <th>Konteks</th>
                             <th>Arab</th>
                             <th>Sebutan</th>
-                            <th>Catatan</th>
+                            <th>Catatan/Makna</th>
                         </tr>
                     </thead>
                     <tbody>${tableRows}</tbody>
@@ -441,7 +441,7 @@ function addStructRow(k='', a='', s='', f='') {
 function addExRow(a='', t='') {
     createRow('exContainer', `
         <input placeholder="Ayat Arab" class="ex-arab arabic-text" value="${a}">
-        <input placeholder="Catatan" class="ex-trans" value="${t}">
+        <input placeholder="Catatan/Makna" class="ex-trans" value="${t}">
     `);
 }
 
@@ -450,7 +450,7 @@ function addConcRow(k='', a='', s='', t='') {
         <input placeholder="Konteks" class="c-context" value="${k}">
         <input placeholder="Arab" class="c-arab arabic-text" value="${a}">
         <input placeholder="Sebutan" class="c-sound" value="${s}">
-        <input placeholder="Catatan" class="c-trans" value="${t}">
+        <input placeholder="Catatan/Makna" class="c-trans" value="${t}">
     `);
 }
 
