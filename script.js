@@ -24,39 +24,87 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 /* =========================================
-   2. SEARCH LOGIC (CARIAN)
+   2. SEARCH LOGIC (AUTOCOMPLETE)
    ========================================= */
+const suggestionList = document.getElementById('suggestionList');
+
 searchInput.addEventListener('input', (e) => {
     const keyword = e.target.value.trim();
     clearTimeout(debounceTimer);
     
     if (keyword.length === 0) {
-        resultsDiv.innerHTML = '<div class="no-result" style="text-align:center; color:#888;">Mula menaip untuk mencari...</div>';
+        suggestionList.style.display = 'none';
+        searchInput.classList.remove('open');
+        resultsDiv.innerHTML = ''; 
         return;
     }
     
-    // Tunggu 300ms sebelum request (Debounce)
-    debounceTimer = setTimeout(() => { fetchWord(keyword); }, 300);
+    debounceTimer = setTimeout(() => { fetchSuggestions(keyword); }, 300);
 });
 
-async function fetchWord(keyword) {
-    resultsDiv.innerHTML = '<div class="loading" style="text-align:center;">Sedang mencari...</div>';
+async function fetchSuggestions(keyword) {
     try {
         const { data, error } = await _supabase
             .from('dictionary')
-            .select('*')
-            .ilike('word', `${keyword}%`)
-            .limit(5)
-            .order('id', { ascending: true });
+            .select('*') // Ambil semua supaya bila klik tak perlu fetch lagi
+            .ilike('word', `%${keyword}%`) // Cari yang mengandungi keyword
+            .limit(10)     // Hadkan senarai dropdown
+            .order('word', { ascending: true });
 
         if (error) throw error;
-        displayResults(data);
+        renderSuggestions(data);
     } catch (err) {
         console.error(err);
-        resultsDiv.innerHTML = '<div class="no-result">Ralat sambungan. Sila cuba lagi.</div>';
     }
 }
 
+function renderSuggestions(data) {
+    suggestionList.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        suggestionList.style.display = 'none';
+        searchInput.classList.remove('open');
+        return;
+    }
+
+    suggestionList.style.display = 'block';
+    searchInput.classList.add('open'); // Tukar bucu input
+
+    data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'suggestion-item';
+        
+        const arabText = item.details?.arabic || ''; 
+        
+        div.innerHTML = `
+            <span>${item.word}</span>
+            ${arabText ? `<span class="sugg-arab">${arabText}</span>` : ''}
+        `;
+
+        div.onclick = () => {
+            selectWord(item);
+        };
+
+        suggestionList.appendChild(div);
+    });
+}
+
+function selectWord(item) {
+    // 1. Masukkan perkataan dalam input
+    searchInput.value = item.word;
+    
+    suggestionList.style.display = 'none';
+    searchInput.classList.remove('open');
+    
+    displayResults([item]); 
+}
+
+document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !suggestionList.contains(e.target)) {
+        suggestionList.style.display = 'none';
+        searchInput.classList.remove('open');
+    }
+});
 
 /* =========================================
    3. DISPLAY LOGIC (PAPARAN)
@@ -110,7 +158,7 @@ function displayResults(data) {
                     </div>
                 ` : ''}
 
-                ${d.grammar_note ? `<p style="background:#fff3e0; padding:10px; border-radius:6px; font-size:0.95em; margin-top:10px;">💡 <b>Info Nahu:</b> ${d.grammar_note}</p>` : ''}
+                ${d.grammar_note ? `<p style="background:#fff3e0; padding:10px; border-radius:6px; font-size:0.95em; margin-top:10px;">💡 <b>Info:</b> ${d.grammar_note}</p>` : ''}
                 
                 ${structureHTML}
                 ${examplesHTML}
@@ -199,7 +247,7 @@ function getConclusionHTML(conclusion) {
     }
 
     return `
-        <h3>💡 Info Tambahan & Sinonim</h3>
+        <h3>💡 Info Tambahan & Kesimpulan</h3>
         
         ${conclusion.intro ? `<p style="margin-bottom:15px; color:#5f6368;">${conclusion.intro}</p>` : ''}
         
@@ -458,7 +506,6 @@ function addConcRow(k='', a='', s='', t='') {
 function createRow(containerId, innerHTML) {
     const div = document.createElement('div');
     div.className = 'dynamic-row';
-    // Tambah butang buang (X) secara automatik
     div.innerHTML = innerHTML + `<button type="button" onclick="this.parentElement.remove()" style="background:red;color:white;border:none;border-radius:4px; margin-left:5px;">X</button>`;
     
     const container = document.getElementById(containerId);
@@ -466,25 +513,31 @@ function createRow(containerId, innerHTML) {
 }
 
 // --- FUNGSI EDITOR TOOLS ---
-function insertTag(startTag, endTag) {
-    const textarea = document.getElementById('newMeaningExt');
+function insertTag(elementId, startTag, endTag) {
+    const field = document.getElementById(elementId);
+    if (!field) return;
+
+    const start = field.selectionStart;
+    const end = field.selectionEnd;
     
-    // Cari posisi kursor
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    
-    // Ambil teks sedia ada
-    const text = textarea.value;
+    const text = field.value;
     const selectedText = text.substring(start, end);
     
-    // Masukkan tag di sekeliling teks yang dipilih (atau di kursor)
     const replacement = startTag + selectedText + endTag;
     
-    textarea.value = text.substring(0, start) + replacement + text.substring(end);
+    field.value = text.substring(0, start) + replacement + text.substring(end);
     
-    // Letak fokus balik ke textarea
-    textarea.focus();
+    field.focus();
+    field.selectionEnd = start + startTag.length + selectedText.length + endTag.length;
+}
+
+/* --- FUNGSI AUTO CAPITALIZE --- */
+function autoTitleCase(input) {
+    const start = input.selectionStart;
     
-    // Alihkan kursor ke tengah tag (jika tiada teks dipilih)
-    textarea.selectionEnd = start + startTag.length + selectedText.length + endTag.length;
+    input.value = input.value.replace(/\b\w/g, function(char) { 
+        return char.toUpperCase(); 
+    });
+
+    input.selectionStart = input.selectionEnd = start;
 }
