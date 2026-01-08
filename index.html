@@ -4,104 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kamus Pintar</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="app-header">
-        <header>
-            <h1>Kamus Pintar</h1>
-            <p>Arab - Melayu</p>
-        </header>
+    <div id="mobile-wrapper">
 
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Cari perkataan..." autocomplete="off">
-        </div>
-    </div>
-
-    <div id="results" class="container"></div>
-
-    <button id="adminBtn" class="floating-btn">⚙️</button>
-
-    </body>
-
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <div id="loginSection">
-                <h2>Admin Login</h2>
-                <input type="email" id="email" placeholder="Emel Admin">
-                <input type="password" id="password" placeholder="Kata Laluan">
-                <button onclick="handleLogin()" class="action-btn">Masuk</button>
-                <p id="loginError" style="color:red; margin-top:10px;"></p>
-            </div>
-            <div id="dataSection" style="display:none;">
-                <div class="modal-header">
-                    <h2 id="formTitle">Tambah Perkataan</h2>
-                    <button onclick="handleLogout()" class="logout-btn">Log Keluar</button>
+        <div class="app-header">
+            <button id="adminBtn" class="floating-btn">⚙️</button>
+            
+                <header>
+                    <h1>Kamus Pintar</h1>
+                    <p>Arab - Melayu</p>
+                </header>
+            
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Cari perkataan..." autocomplete="off">
                 </div>
-                <div class="scrollable-form">
-                    <label>Perkataan Utama</label><input type="text" id="newWord">
-                    <label>Jenis</label><input type="text" id="newType">
-                    <hr>
-                    <label>Data Bahasa & Makna</label>
-                    <div class="linguistic-box">
+            </div>
+            
+            <div id="results" class="container"></div>
+
+        <button id="adminBtn" class="floating-btn">⚙️</button>
+
+        <div id="adminModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                
+                <div id="loginSection">
+                    <h2>Admin Login</h2>
+                    <input type="email" id="email" placeholder="Emel Admin">
+                    <input type="password" id="password" placeholder="Kata Laluan">
+                    <button onclick="handleLogin()" class="action-btn">Masuk</button>
+                    <p id="loginError" style="color:red; margin-top:10px;"></p>
+                </div>
+
+                <div id="dataSection" style="display:none;">
+                    <div class="modal-header">
+                        <h2 id="formTitle">Tambah Perkataan</h2>
+                        <button onclick="handleLogout()" class="logout-btn">Log Keluar</button>
+                    </div>
+                    
+                    <div class="scrollable-form">
+                        <label>Perkataan Utama</label>
+                        <input type="text" id="newWord">
                         
-                        <div class="top-row">
-                            <input type="text" id="newArab" class="arabic-text" placeholder="Ejaan Arab (contoh: مَكَانٌ)">
-                            <div class="vertical-line"></div>
-                            <input type="text" id="newTrans" placeholder="Ejaan Rumi (contoh: makānun)">
+                        <label>Jenis / Tag</label>
+                        <input type="text" id="newType" placeholder="Contoh: Isim, Fe'el, Frasa">
+                        
+                        <hr class="divider">
+                        
+                        <label>Data Bahasa & Makna</label>
+                        <div class="linguistic-box">
+                            
+                            <div class="top-row">
+                                <input type="text" id="newArab" class="arabic-text" placeholder="Ejaan Arab (contoh: مَكَانٌ)">
+                                <div class="vertical-line"></div>
+                                <input type="text" id="newTrans" placeholder="Ejaan Rumi (contoh: makānun)">
+                            </div>
+                        
+                            <div class="editor-toolbar">
+                                <button type="button" onclick="insertTag('<b>', '</b>')" title="Bold (Tebal)"><b>B</b></button>
+                                <button type="button" onclick="insertTag('<i>', '</i>')" title="Italic (Condong)"><i>I</i></button>
+                                <button type="button" onclick="insertTag('<br>', '')" title="Baris Baru">↵ Enter</button>
+                                <span class="toolbar-label">Huraian Makna</span>
+                            </div>
+                        
+                            <textarea id="newMeaningExt" class="editor-textarea" placeholder="Tulis huraian makna di sini... HTML dibenarkan." rows="4"></textarea>
+                            <div class="editor-footer-line"></div>
                         </div>
-                    
-                        <div class="editor-toolbar">
-                            <button type="button" onclick="insertTag('<b>', '</b>')" title="Bold (Tebal)"><b>B</b></button>
-                            <button type="button" onclick="insertTag('<i>', '</i>')" title="Italic (Condong)"><i>I</i></button>
-                            <button type="button" onclick="insertTag('<br>', '')" title="Baris Baru">↵ Enter</button>
-                            <span class="toolbar-label">Huraian Makna</span>
+
+                        <input type="text" id="newGrammar" placeholder="Nota Nahu (Pilihan)">
+                        
+                        <hr class="divider">
+
+                        <h3>1. Struktur & Makna</h3>
+                        <div class="dynamic-section">
+                            <h4>Jadual Struktur <button onclick="addStructRow()" class="small-btn" style="background:#1976d2; color:white; border:none; padding:2px 8px; border-radius:4px;">+</button></h4>
+                            <div id="structContainer">
+                                </div>
                         </div>
-                    
-                        <textarea id="newMeaningExt" class="editor-textarea" placeholder="Tulis huraian makna di sini... Contoh: bermaksud <b>dekat</b>..." rows="4"></textarea>
-                    
-                        <div class="editor-footer-line"></div>
+                        
+                        <hr class="divider">
+
+                        <h3>2. Contoh Ayat Harian</h3>
+                        <div class="dynamic-section">
+                            <h4>Senarai Contoh <button onclick="addExRow()" class="small-btn" style="background:#1976d2; color:white; border:none; padding:2px 8px; border-radius:4px;">+</button></h4>
+                            <div id="exContainer">
+                                </div>
+                        </div>
+                        
+                        <hr class="divider">
+
+                        <h3>3. Info Tambahan & Kesimpulan</h3>
+                        <label>Pengenalan (Intro)</label>
+                        <textarea id="newConcIntro" placeholder="Contoh: Perkataan ini berasal daripada... (HTML dibenarkan)" rows="3"></textarea>
+                        
+                        <div class="dynamic-section">
+                            <h4>Jadual Tambahan <button onclick="addConcRow()" class="small-btn" style="background:#1976d2; color:white; border:none; padding:2px 8px; border-radius:4px;">+</button></h4>
+                            <div id="concContainer">
+                                </div>
+                        </div>
+                        
+                        <button onclick="submitData()" class="save-btn">Simpan</button>
+                        <p id="statusMsg"></p>
                     </div>
-                    <input type="text" id="newGrammar" placeholder="Nota">
-                    
-                    <hr class="divider">
-                    <h3>1. Struktur & Makna</h3>
-                    <div class="dynamic-section">
-                        <h4>Jadual Struktur <button onclick="addStructRow()" class="small-btn" style="background:#1976d2;">+</button></h4>
-                        <div id="structContainer">
-                            </div>
-                    </div>
-                    
-                    <hr class="divider">
-                    <h3>2. Contoh Ayat Harian</h3>
-                    <div class="dynamic-section">
-                        <h4>Senarai Contoh <button onclick="addExRow()" class="small-btn" style="background:#1976d2;">+</button></h4>
-                        <div id="exContainer">
-                            </div>
-                    </div>
-                    
-                    <hr class="divider">
-                    <h3>3. Info Tambahan & Kesimpulan</h3>
-                    <label>Pengenalan (Intro)</label>
-                    <textarea id="newConcIntro" placeholder="Contoh: Perkataan ini berasal daripada... (HTML dibenarkan)" rows="3"></textarea>
-                    
-                    <div class="dynamic-section">
-                        <h4>Jadual Tambahan <button onclick="addConcRow()" class="small-btn" style="background:#1976d2;">+</button></h4>
-                        <div id="concContainer">
-                            </div>
-                    </div>
-                    
-                    <button onclick="submitData()" class="save-btn">Simpan</button>
-                    <p id="statusMsg"></p>
                 </div>
             </div>
-        </div>
-    </div>
-
+        </div> 
+        </div> 
     <script src="script.js"></script>
 </body>
 </html>
