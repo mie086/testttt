@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -25,6 +26,7 @@
             
                 <div class="search-box">
                     <input type="search" name="q" id="searchInput" placeholder="Cari perkataan..." autocomplete="off">
+                    <div id="suggestionList" class="suggestion-box"></div>
                 </div>
             </div>
             
@@ -55,64 +57,94 @@
                     </div>
                     
                     <div class="scrollable-form">
+                        
                         <label>Perkataan Utama</label>
-                        <input type="text" id="newWord">
-                        
+                        <div class="linguistic-box">
+                            <div class="editor-toolbar">
+                                <button type="button" onclick="insertTag('newWord', '<b>', '</b>')"><b>B</b></button>
+                                <button type="button" onclick="insertTag('newWord', '<i>', '</i>')"><i>I</i></button>
+                                <button type="button" onclick="insertTag('newWord', '<br>', '')">↵</button>
+                                <span class="toolbar-label">Utama</span>
+                            </div>
+                            <input type="text" id="newWord" class="editor-textarea" placeholder="Contoh: Makan" style="height:50px;" oninput="autoTitleCase(this)">
+                            <div class="editor-footer-line"></div>
+                        </div>
+                    
                         <label>Jenis / Tag</label>
-                        <input type="text" id="newType" placeholder="Contoh: Isim, Fe'el, Frasa">
-                        
+                        <div class="linguistic-box">
+                            <div class="editor-toolbar">
+                                <button type="button" onclick="insertTag('newType', '<b>', '</b>')"><b>B</b></button>
+                                <button type="button" onclick="insertTag('newType', '<i>', '</i>')"><i>I</i></button>
+                                <button type="button" onclick="insertTag('newType', '<br>', '')">↵</button>
+                                <span class="toolbar-label">Kategori</span>
+                            </div>
+                            <input type="text" id="newType" class="editor-textarea" placeholder="Contoh: Isim, Fi'il" style="height:50px;" oninput="autoTitleCase(this)">
+                            <div class="editor-footer-line"></div>
+                        </div>
+                    
                         <hr class="divider">
                         
                         <label>Data Bahasa & Makna</label>
                         <div class="linguistic-box">
-                            
                             <div class="top-row">
-                                <input type="text" id="newArab" class="arabic-text" placeholder="Ejaan Arab (contoh: مَكَانٌ)">
+                                <input type="text" id="newArab" class="arabic-text" placeholder="Contoh: مَكَانٌ">
                                 <div class="vertical-line"></div>
-                                <input type="text" id="newTrans" placeholder="Ejaan Rumi (contoh: makānun)">
+                                <input type="text" id="newTrans" placeholder="Contoh: makānun">
                             </div>
-                        
                             <div class="editor-toolbar">
-                                <button type="button" onclick="insertTag('<b>', '</b>')" title="Bold (Tebal)"><b>B</b></button>
-                                <button type="button" onclick="insertTag('<i>', '</i>')" title="Italic (Condong)"><i>I</i></button>
-                                <button type="button" onclick="insertTag('<br>', '')" title="Baris Baru">↵ Enter</button>
-                                <span class="toolbar-label">Huraian Makna</span>
+                                <button type="button" onclick="insertTag('newMeaningExt', '<b>', '</b>')"><b>B</b></button>
+                                <button type="button" onclick="insertTag('newMeaningExt', '<i>', '</i>')"><i>I</i></button>
+                                <button type="button" onclick="insertTag('newMeaningExt', '<br>', '')">↵</button>
+                                <span class="toolbar-label">Huraian</span>
                             </div>
-                        
-                            <textarea id="newMeaningExt" class="editor-textarea" placeholder="Tulis huraian makna di sini... HTML dibenarkan." rows="4"></textarea>
+                            <textarea id="newMeaningExt" class="editor-textarea" placeholder="Tulis huraian makna..." rows="4"></textarea>
                             <div class="editor-footer-line"></div>
                         </div>
-
-                        <input type="text" id="newGrammar" placeholder="Nota Nahu (Pilihan)">
-                        
-                        <hr class="divider">
-
-                        <h3>1. Struktur & Makna</h3>
-                        <div class="dynamic-section">
-                            <h4>Jadual Struktur <button onclick="addStructRow()" class="small-btn" style="background:#1976d2; color:white; border:none; padding:2px 8px; border-radius:4px;">+</button></h4>
-                            <div id="structContainer">
-                                </div>
+                    
+                        <label style="margin-top:15px; display:block;">Nota</label>
+                        <div class="linguistic-box">
+                            <div class="editor-toolbar">
+                                <button type="button" onclick="insertTag('newGrammar', '<b>', '</b>')"><b>B</b></button>
+                                <button type="button" onclick="insertTag('newGrammar', '<i>', '</i>')"><i>I</i></button>
+                                <button type="button" onclick="insertTag('newGrammar', '<br>', '')">↵</button>
+                                <span class="toolbar-label">Nota</span>
+                            </div>
+                            <textarea id="newGrammar" class="editor-textarea" placeholder="Nota tambahan..." rows="2"></textarea>
+                            <div class="editor-footer-line"></div>
                         </div>
                         
                         <hr class="divider">
-
-                        <h3>2. Contoh Ayat Harian</h3>
+                        <h3>🧩 Struktur & Makna</h3>
                         <div class="dynamic-section">
-                            <h4>Senarai Contoh <button onclick="addExRow()" class="small-btn" style="background:#1976d2; color:white; border:none; padding:2px 8px; border-radius:4px;">+</button></h4>
-                            <div id="exContainer">
-                                </div>
+                            <h4>Jadual Struktur <button onclick="addStructRow()" class="small-btn" style="background:#1976d2; color:white;">+</button></h4>
+                            <div id="structContainer"></div>
                         </div>
                         
                         <hr class="divider">
-
-                        <h3>3. Info Tambahan & Kesimpulan</h3>
+                        <h3>💬 Contoh Ayat Harian</h3>
+                        <div class="dynamic-section">
+                            <h4>Senarai Contoh <button onclick="addExRow()" class="small-btn" style="background:#1976d2; color:white;">+</button></h4>
+                            <div id="exContainer"></div>
+                        </div>
+                        
+                        <hr class="divider">
+                        
+                        <h3>💡 Info Tambahan & Kesimpulan</h3>
                         <label>Pengenalan (Intro)</label>
-                        <textarea id="newConcIntro" placeholder="Contoh: Perkataan ini berasal daripada... (HTML dibenarkan)" rows="3"></textarea>
+                        <div class="linguistic-box">
+                            <div class="editor-toolbar">
+                                <button type="button" onclick="insertTag('newConcIntro', '<b>', '</b>')"><b>B</b></button>
+                                <button type="button" onclick="insertTag('newConcIntro', '<i>', '</i>')"><i>I</i></button>
+                                <button type="button" onclick="insertTag('newConcIntro', '<br>', '')">↵</button>
+                                <span class="toolbar-label">Intro</span>
+                            </div>
+                            <textarea id="newConcIntro" class="editor-textarea" placeholder="Contoh: Perkataan ini berasal daripada..." rows="3"></textarea>
+                            <div class="editor-footer-line"></div>
+                        </div>
                         
                         <div class="dynamic-section">
-                            <h4>Jadual Tambahan <button onclick="addConcRow()" class="small-btn" style="background:#1976d2; color:white; border:none; padding:2px 8px; border-radius:4px;">+</button></h4>
-                            <div id="concContainer">
-                                </div>
+                            <h4>Jadual Tambahan <button onclick="addConcRow()" class="small-btn" style="background:#1976d2; color:white;">+</button></h4>
+                            <div id="concContainer"></div>
                         </div>
                         
                         <button onclick="submitData()" class="save-btn">Simpan</button>
