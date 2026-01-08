@@ -378,11 +378,58 @@ function resetForm() {
 
 // --- C. Submit Data (Insert/Update) ---
 async function submitData() {
+    const wordInput = document.getElementById('newWord');
+    const wordValue = wordInput.value.trim();
     const msg = document.getElementById('statusMsg');
-    msg.textContent = "Menyimpan...";
+
+    // 1. Validasi Asas: Pastikan tak kosong
+    if (!wordValue) {
+        alert("Sila masukkan Perkataan Utama!");
+        wordInput.focus();
+        return;
+    }
+
+    msg.textContent = "Sedang memeriksa...";
     msg.style.color = "blue";
 
-    // 1. Kumpul Data Dynamic Rows
+    // 2. KOD BARU: CHECK DUPLICATE (HALANG PERKATAAN SAMA)
+    try {
+        // Cari dalam database jika ada perkataan yang sama (tak kira huruf besar/kecil)
+        let query = _supabase
+            .from('dictionary')
+            .select('id')
+            .ilike('word', wordValue);
+
+        if (currentEditId) {
+            query = query.neq('id', currentEditId);
+        }
+
+        const { data: duplicates, error: checkError } = await query;
+
+        if (checkError) throw checkError;
+
+        if (duplicates && duplicates.length > 0) {
+            alert(`⚠️ PERHATIAN:\n\nPerkataan "${wordValue}" sudah wujud dalam kamus!\nSila gunakan perkataan lain atau edit perkataan sedia ada.`);
+            
+            wordInput.style.border = "2px solid red";
+            wordInput.style.background = "#fff0f0";
+            wordInput.focus();
+            
+            msg.textContent = ""; // Padam status loading
+            return; // BERHENTI DI SINI (Jangan simpan)
+        }
+
+        wordInput.style.border = "1px solid #dadce0";
+        wordInput.style.background = "#fff";
+
+    } catch (err) {
+        console.error("Ralat check duplicate:", err);
+        msg.textContent = "Ralat sistem. Cuba lagi.";
+        return;
+    }
+
+    msg.textContent = "Menyimpan...";
+
     const structData = Array.from(document.querySelectorAll('#structContainer .dynamic-row')).map(r => ({
         komponen: r.querySelector('.s-comp').value,
         arab: r.querySelector('.s-arab').value,
@@ -402,7 +449,6 @@ async function submitData() {
         terjemahan: r.querySelector('.c-trans').value
     }));
 
-    // 2. Bina JSON Object
     const detailsJSON = {
         arabic: document.getElementById('newArab').value,
         tag: document.getElementById('newType').value,
@@ -420,12 +466,9 @@ async function submitData() {
         }
     };
 
-    // 3. Payload ke Database
     const payload = {
-        word: document.getElementById('newWord').value,
-        
+        word: wordValue, // Guna nilai yang dah dibersihkan
         definition: "-", 
-        
         type: document.getElementById('newType').value,
         details: detailsJSON
     };
@@ -445,11 +488,14 @@ async function submitData() {
         msg.textContent = currentEditId ? "✅ Berjaya dikemaskini!" : "✅ Berjaya ditambah!";
         msg.style.color = "green";
         
+        wordInput.style.border = "1px solid #dadce0";
+        wordInput.style.background = "#fff";
+        
         setTimeout(() => { 
             msg.textContent = ""; 
             modal.style.display = "none"; 
             const key = searchInput.value.trim();
-            if(key) fetchWord(key);
+            if(key) fetchWord(key); // Refresh hasil carian
         }, 1500);
 
     } catch (err) {
