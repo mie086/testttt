@@ -150,11 +150,21 @@ function getStructureHTML(structure) {
         </tr>`
     ).join('');
 
-    return `<h3>1. Struktur & Makna</h3>
+    return `
+        <h3>🧩 Struktur & Makna</h3>
+        <div class="table-scroll">
             <table class="custom-table">
-                <thead><tr><th>Komponen</th><th>Arab</th><th>Sebutan</th><th>Fungsi/Makna</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>Komponen</th>
+                        <th>Arab</th>
+                        <th>Sebutan</th>
+                        <th>Fungsi/Makna</th>
+                    </tr>
+                </thead>
                 <tbody>${rows}</tbody>
-            </table>`;
+            </table>
+        </div>`;
 }
 
 function getExamplesHTML(examples) {
@@ -170,7 +180,7 @@ function getExamplesHTML(examples) {
         </div>`
     ).join('');
 
-    return `<h3>2. Contoh Ayat Harian</h3><div class="example-list">${list}</div>`;
+    return `<h3>💬 Contoh Ayat Harian</h3><div class="example-list">${list}</div>`;
 }
 
 function getConclusionHTML(conclusion) {
@@ -189,18 +199,27 @@ function getConclusionHTML(conclusion) {
     }
 
     return `
-        <div class="info-box">
-            <h3 class="section-title">3. Info Tambahan & Sinonim</h3>
-            <p class="info-intro">${conclusion.intro || ''}</p>
-            ${tableRows ? `
-                <table class="custom-table table-blue-header" style="background:white;">
-                    <thead><tr><th>Konteks</th><th>Arab</th><th>Sebutan</th><th>Terjemahan</th></tr></thead>
+        <h3>💡 Info Tambahan & Sinonim</h3>
+        
+        ${conclusion.intro ? `<p style="margin-bottom:15px; color:#5f6368;">${conclusion.intro}</p>` : ''}
+        
+        ${tableRows ? `
+            <div class="table-scroll">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Konteks</th>
+                            <th>Arab</th>
+                            <th>Sebutan</th>
+                            <th>Terjemahan</th>
+                        </tr>
+                    </thead>
                     <tbody>${tableRows}</tbody>
                 </table>
-            ` : ''}
-        </div>`;
+            </div>
+        ` : ''}
+    `;
 }
-
 
 /* =========================================
    4. ADMIN MODAL & AUTH LOGIC
