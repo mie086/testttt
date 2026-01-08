@@ -381,7 +381,6 @@ input:focus, textarea:focus { border-color: #1a73e8; outline: none; }
     border-radius: 8px;            /* Bucu bulat */
 }
 
-/* Kemaskini table supaya ada lebar minimum */
 .custom-table {
     width: 100%;
     min-width: 500px; /* PENTING: Paksa table lebar supaya scroll muncul di mobile */
@@ -390,8 +389,49 @@ input:focus, textarea:focus { border-color: #1a73e8; outline: none; }
     font-size: 0.9rem;
 }
 
-/* Pastikan header table tak pecah */
 .custom-table th {
     white-space: nowrap; /* Teks header satu baris, tak turun bawah */
     background-color: #f8f9fa; /* Latar header sikit kelabu */
+}
+
+.suggestion-box {
+    position: absolute;
+    top: 100%;             /* Duduk betul-betul bawah input */
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dadce0;
+    border-top: none;      /* Gabung nampak dengan input */
+    border-radius: 0 0 24px 24px; /* Bucu bulat bawah sahaja */
+    box-shadow: 0 4px 6px rgba(32,33,36,0.28);
+    z-index: 1001;         /* Pastikan ia duduk ATAS result lain */
+    display: none;         /* Sembunyi secara default */
+    max-height: 300px;     /* Had ketinggian */
+    overflow-y: auto;      /* Scroll jika senarai panjang */
+}
+
+.suggestion-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f3f4;
+    font-size: 16px;
+    color: #202124;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.suggestion-item:hover {
+    background-color: #eee;
+}
+
+.sugg-arab {
+    font-family: 'Amiri', serif;
+    font-size: 1.2rem;
+    color: #1a73e8;
+}
+
+.search-box input.open {
+    border-radius: 24px 24px 0 0;
+    border-bottom: 1px solid transparent;
 }
