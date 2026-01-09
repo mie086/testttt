@@ -435,3 +435,23 @@ input:focus, textarea:focus { border-color: #1a73e8; outline: none; }
     border-radius: 24px 24px 0 0;
     border-bottom: 1px solid transparent;
 }
+
+.ai-note {
+    text-align: center;
+    font-size: 0.75rem;     /* Saiz teks Melayu */
+    color: #9aa0a6;
+    margin-top: 8px;
+    margin-bottom: 0;
+    font-style: italic;
+    padding: 0 20px;
+    line-height: 1.5;       /* Jarak antara baris Melayu & Arab */
+}
+
+.note-arab {
+    font-family: 'Amiri', serif;  /* Guna font Arab cantik */
+    font-style: normal;           /* Arab tak perlu italic */
+    font-size: 0.85rem;           /* Besar sikit dari Rumi supaya jelas */
+    display: block;               /* Pastikan ia duduk di baris baru */
+    direction: rtl;               /* Arah teks Kanan-ke-Kiri */
+    margin-top: 2px;
+}
