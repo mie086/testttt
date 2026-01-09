@@ -342,8 +342,15 @@ function setupEdit(item) {
     
     // Populate Fields
     document.getElementById('newWord').value = item.word;
-    // [BARIS 'newDef' TELAH DIBUANG DI SINI] 
-    document.getElementById('newType').value = item.type || (item.details?.tag || '');
+    const typeValue = item.type || (item.details?.tag || '');
+    const typeSelect = document.getElementById('newType');
+    
+    typeSelect.value = typeValue;
+    
+    if (typeValue && typeSelect.value === "") {
+        const newOption = new Option(typeValue, typeValue, true, true);
+        typeSelect.add(newOption);
+    }
 
     const d = item.details || {};
     document.getElementById('newArab').value = d.arabic || '';
