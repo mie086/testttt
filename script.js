@@ -247,7 +247,7 @@ function getConclusionHTML(conclusion) {
     }
 
     return `
-        <h3>💡 Info Tambahan & Kesimpulan</h3>
+        <h3>💡 Info Tambahan</h3>
         
         ${conclusion.intro ? `<p style="margin-bottom:15px; color:#5f6368;">${conclusion.intro}</p>` : ''}
         
