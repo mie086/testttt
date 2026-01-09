@@ -72,13 +72,42 @@
                     
                         <label>Jenis / Tag</label>
                         <div class="linguistic-box">
-                            <div class="editor-toolbar">
-                                <button type="button" onclick="insertTag('newType', '<b>', '</b>')"><b>B</b></button>
-                                <button type="button" onclick="insertTag('newType', '<i>', '</i>')"><i>I</i></button>
-                                <button type="button" onclick="insertTag('newType', '<br>', '')">↵</button>
-                                <span class="toolbar-label">Kategori</span>
+                            <div class="editor-toolbar" style="padding: 10px 12px;">
+                                <span class="toolbar-label" style="margin-left: 0;">Pilih Kategori Nahu</span>
                             </div>
-                            <input type="text" id="newType" class="editor-textarea" placeholder="Contoh: Isim, Fi'il" style="height:50px;" oninput="autoTitleCase(this)">
+                        
+                            <select id="newType" class="editor-textarea" style="height:50px; cursor:pointer; background:transparent;">
+                                <option value="" disabled selected>Sila Pilih...</option>
+                                
+                                <optgroup label="Kalimah (Perkataan)">
+                                    <option value="Isim">Isim</option>
+                                    <option value="Fi‘il">Fi‘il</option>
+                                    <option value="Harf">Harf</option>
+                                </optgroup>
+                        
+                                <optgroup label="Murakkab (Frasa)">
+                                    <option value="Murakkab Iḍāfī">Murakkab Iḍāfī</option>
+                                    <option value="Murakkab Waṣfī">Murakkab Waṣfī</option>
+                                    <option value="Murakkab ‘Aṭfī">Murakkab ‘Aṭfī</option>
+                                    <option value="Murakkab Isyārī">Murakkab Isyārī</option>
+                                    <option value="Murakkab ‘Adadī">Murakkab ‘Adadī</option>
+                                    <option value="Murakkab Isnādī">Murakkab Isnādī</option>
+                                </optgroup>
+                        
+                                <optgroup label="Jumlah (Ayat)">
+                                    <option value="Jumlah Ismiyyah">Jumlah Ismiyyah</option>
+                                    <option value="Jumlah Fi‘liyyah">Jumlah Fi‘liyyah</option>
+                                </optgroup>
+                        
+                                <optgroup label="Struktur & Klausa Lain">
+                                    <option value="Jar + Majrūr">Jar + Majrūr</option>
+                                    <option value="Ẓarf + Muḍāf Ilayh">Ẓarf + Muḍāf Ilayh</option>
+                                    <option value="Jumlah Ṣilah">Jumlah Ṣilah</option>
+                                    <option value="Jumlah Syarṭiyyah">Jumlah Syarṭiyyah</option>
+                                    <option value="Jumlah Ḥāliyah">Jumlah Ḥāliyah</option>
+                                </optgroup>
+                            </select>
+                            
                             <div class="editor-footer-line"></div>
                         </div>
                     
